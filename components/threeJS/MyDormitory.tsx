@@ -6,7 +6,7 @@ import { MultipleObjectsModel } from "./MultipleObjects";
 
 
 
-export function MyDormitory() {
+export function MyDormitory({ onSelectRestaurant }) {
     const [OrbitControls, events] = useControls()
     const [camPosition, setCamPosition] = useState({ x: 0, y: 0, z: 5 });
 
@@ -16,11 +16,10 @@ export function MyDormitory() {
             <Canvas>
                 <OrbitControls onChange={(event) => {
                     setCamPosition(event.target.camera.position);
-                    // console.log(event.target.camera.position);
                 }} />
                 <ambientLight intensity={0.7} />
                 <pointLight position={[-10, 10, 5]} />
-                <MultipleObjectsModel camPosition={camPosition} />
+                <MultipleObjectsModel camPosition={camPosition} onSelectRestaurant={onSelectRestaurant} />
             </Canvas>
         </View>
 

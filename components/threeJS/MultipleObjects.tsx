@@ -2,10 +2,14 @@ import React, { useRef, useState } from "react";
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 import { LoaderProto, useFrame, useLoader } from "@react-three/fiber/native"
 import { TextureLoader } from "expo-three";
+import { useTheme } from "@rneui/themed";
 
 type Position = { x: number, y: number, z: number }
 
-export function MultipleObjectsModel({ camPosition }: { camPosition: Position }) {
+
+export function MultipleObjectsModel({ camPosition, onSelectRestaurant }: { camPosition: Position, onSelectRestaurant: (name: string) => void }) {
+  const { theme } = useTheme();
+  
   useLoader(TextureLoader as LoaderProto<unknown>,
     require('../../assets/texture.jpg'),
   );
@@ -14,7 +18,7 @@ export function MultipleObjectsModel({ camPosition }: { camPosition: Position })
 
   const childrenRefs = useRef<any[]>([]); // 为每个子对象创建一个 ref 数组
   const [childrenState, setChildrenState] = useState(() =>
-    gltf.scene.children.map(() => ({ isSelect: false }))
+    gltf.scene.children.map((child) => ({ name: child.name, isSelect: false }))
   );
 
   // 点击事件处理程序
@@ -33,6 +37,9 @@ export function MultipleObjectsModel({ camPosition }: { camPosition: Position })
 
     // 更新子对象状态
     setChildrenState(newState);
+
+    // 选择时回调
+    onSelectRestaurant(newState[index].name);
   }
 
   useFrame((_state, _delta) => {
@@ -61,7 +68,7 @@ export function MultipleObjectsModel({ camPosition }: { camPosition: Position })
             onClick={() => handleItemClick(index)} // 将子对象索引传递给点击事件处理程序
           >
             <meshStandardMaterial
-              color={childrenState[index].isSelect ? 'skyblue' : 'white'}
+              color={childrenState[index].isSelect ? theme?.colors.primary : 'white'}
               transparent // 透明
               opacity={0.7} // 透明度
             />
@@ -71,6 +78,7 @@ export function MultipleObjectsModel({ camPosition }: { camPosition: Position })
               material={text.material}
               position={text.position}
               ref={childRef} // 使用独立的 ref
+              raycast={() => { }}
             />
           </mesh>
         )
