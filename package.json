@@ -11,6 +11,7 @@
   "dependencies": {
     "@react-navigation/bottom-tabs": "^6.5.7",
     "@react-navigation/native": "^6.1.6",
+    "@react-navigation/stack": "^6.3.16",
     "@react-three/drei": "^9.65.3",
     "@react-three/fiber": "^8.12.0",
     "@rneui/base": "4.0.0-rc.7",
@@ -27,6 +28,7 @@
     "r3f-native-orbitcontrols": "^1.0.5",
     "react": "18.2.0",
     "react-native": "0.71.6",
+    "react-native-gesture-handler": "^2.9.0",
     "react-native-safe-area-context": "^4.5.0",
     "react-native-screens": "~3.20.0",
     "three": "^0.151.3",

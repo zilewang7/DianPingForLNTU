@@ -1,10 +1,11 @@
 import * as React from "react";
 import { NavigationContainer } from "@react-navigation/native";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { useTheme } from "@rneui/themed";
 import { TabNavigation } from "./TabNavigation";
+import { ModalNavigation } from "./ModalNavigation";
+import { createStackNavigator } from "@react-navigation/stack";
 
-const Tab = createBottomTabNavigator();
+const RootStack = createStackNavigator();
 
 export const RootNavigator = ({ onReady }) => {
     const { theme } = useTheme();
@@ -21,7 +22,14 @@ export const RootNavigator = ({ onReady }) => {
             },
             dark: theme.mode === 'dark',
         }}>
-            <TabNavigation />
+            <RootStack.Navigator>
+                <RootStack.Group>
+                    <RootStack.Screen name="Home" component={TabNavigation} options={{ headerShown: false }} />
+                </RootStack.Group>
+                <RootStack.Group screenOptions={{ presentation: 'modal' }}>
+                    {ModalNavigation}
+                </RootStack.Group>
+            </RootStack.Navigator>
         </NavigationContainer>
     );
 }
