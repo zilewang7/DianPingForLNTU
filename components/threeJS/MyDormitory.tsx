@@ -6,10 +6,9 @@ import { MultipleObjectsModel } from "./MultipleObjects";
 
 
 
-export function MyDormitory({ onSelectRestaurant }) {
+export function MyDormitory({ onSelectRestaurant, setTabSwitchAllowed }) {
     const [OrbitControls, events] = useControls()
     const [camPosition, setCamPosition] = useState({ x: 0, y: 0, z: 5 });
-
 
     return (
         <View {...events} style={{ flex: 1 }}>
@@ -19,7 +18,7 @@ export function MyDormitory({ onSelectRestaurant }) {
                 }} />
                 <ambientLight intensity={0.7} />
                 <pointLight position={[-10, 10, 5]} />
-                <MultipleObjectsModel camPosition={camPosition} onSelectRestaurant={onSelectRestaurant} />
+                <MultipleObjectsModel camPosition={camPosition} onSelectRestaurant={onSelectRestaurant} setTabSwitchAllowed={setTabSwitchAllowed}/>
             </Canvas>
         </View>
 

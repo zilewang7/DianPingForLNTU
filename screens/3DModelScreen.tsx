@@ -5,7 +5,7 @@ import { ModalCard } from '../components/modalCard';
 import { MyDormitory } from '../components/threeJS/MyDormitory';
 
 
-function ModelScreen() {
+function ModelScreen({ setTabSwitchAllowed }) {
     const [selectedIndex, setSelectedIndex] = useState(0);
     const [selectedIndexes, setSelectedIndexes] = useState([0, 1, 2]);
     const [modalState, setModalState] = useState(false);
@@ -31,10 +31,10 @@ function ModelScreen() {
             {
                 selectedIndex === 0
                     ? (
-                        <MyDormitory onSelectRestaurant={onSelectRestaurant} />
+                        <MyDormitory onSelectRestaurant={onSelectRestaurant} setTabSwitchAllowed={setTabSwitchAllowed}/>
                     )
                     : (
-                        <MyDormitory onSelectRestaurant={onSelectRestaurant} />
+                        <MyDormitory onSelectRestaurant={onSelectRestaurant} setTabSwitchAllowed={setTabSwitchAllowed}/>
                     )
             }
             <ButtonGroup

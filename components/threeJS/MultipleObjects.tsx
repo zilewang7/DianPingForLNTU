@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 import { LoaderProto, useFrame, useLoader } from "@react-three/fiber/native"
 import { TextureLoader } from "expo-three";
@@ -7,9 +7,19 @@ import { useTheme } from "@rneui/themed";
 type Position = { x: number, y: number, z: number }
 
 
-export function MultipleObjectsModel({ camPosition, onSelectRestaurant }: { camPosition: Position, onSelectRestaurant: (name: string) => void }) {
+export function MultipleObjectsModel(
+  {
+    camPosition,
+    onSelectRestaurant,
+    setTabSwitchAllowed
+  }
+    : {
+      camPosition: Position,
+      onSelectRestaurant: (name: string) => void,
+      setTabSwitchAllowed: React.Dispatch<React.SetStateAction<boolean>>
+    }) {
   const { theme } = useTheme();
-  
+
   useLoader(TextureLoader as LoaderProto<unknown>,
     require('../../assets/texture.jpg'),
   );
@@ -51,6 +61,13 @@ export function MultipleObjectsModel({ camPosition, onSelectRestaurant }: { camP
       childRef.current.rotateX(Math.PI / 2);
     });
   });
+
+  useEffect(() => {
+    if (childrenRefs.current) {
+      // childrenRefs加载完成
+      setTabSwitchAllowed(true)
+    }
+  }, [childrenRefs]);
 
   return (
     <group scale={0.4}>
