@@ -18,6 +18,7 @@
     "@rneui/themed": "4.0.0-rc.7",
     "@types/react": "^18.0.33",
     "@types/react-native": "^0.71.5",
+    "crypto-js": "^4.1.1",
     "expo": "~48.0.10",
     "expo-file-system": "~15.2.2",
     "expo-font": "^11.1.1",

@@ -11,6 +11,7 @@ import {
     TextInput,
 } from 'react-native';
 import { Input, Button, Icon, InputProps } from '@rneui/themed';
+import { createUser, userLogin } from '../api/user.api';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const SCREEN_HEIGHT = Dimensions.get('window').height;
@@ -67,57 +68,77 @@ const LoginScreen: React.FunctionComponent<LoginScreenState> = (
         return re.test(testUsername);
     };
 
-    const login = () => {
+    const login = async () => {
         setLoading(true);
-        // Simulate an API call
-        setTimeout(() => {
-            const isUsernameValidFlag =
-                validateUsername(username) || usernameInput.current.shake();
-            const isPasswordValidFlag =
-                password.length >= 8 || passwordInput.current.shake();
+        const isUsernameValidFlag =
+            validateUsername(username) || usernameInput.current.shake();
+        const isPasswordValidFlag =
+            password.length >= 8 || passwordInput.current.shake();
 
-            LayoutAnimation.easeInEaseOut();
-            setLoading(false);
-            setUsernameValid(!!isUsernameValidFlag);
-            setPasswordValid(!!isPasswordValidFlag);
-            if (isUsernameValidFlag && isPasswordValidFlag) {
-                navigation.goBack();
+        LayoutAnimation.easeInEaseOut();
+        setUsernameValid(!!isUsernameValidFlag);
+        setPasswordValid(!!isPasswordValidFlag);
+        if (isUsernameValidFlag && isPasswordValidFlag) {
+            try {
+                const res = await userLogin(username, password);
+                if (!res.ok) {
+                    Alert.alert('用户名或密码错误');
+                    return;
+                }
+            } catch {
+                Alert.alert('🔗⁉️', '网络连接出错')
+                return;
+            } finally {
+                setLoading(false);
             }
-        });
+            navigation.goBack();
+        }
+        setLoading(false);
     };
 
-    const signUp = () => {
+    const signUp = async () => {
         setLoading(true);
-        // Simulate an API call
-        setTimeout(() => {
-            const isUsernameValidFlag =
-                validateUsername(username) || usernameInput.current.shake();
-            const isPasswordValidFlag =
-                password.length >= 8 || passwordInput.current.shake();
-            const isConfirmPasswordValidFlag =
-                password === confirmPassword || confirmationInput.current.shake();
+        const isUsernameValidFlag =
+            validateUsername(username) || usernameInput.current.shake();
+        const isPasswordValidFlag =
+            password.length >= 8 || passwordInput.current.shake();
+        const isConfirmPasswordValidFlag =
+            password === confirmPassword || confirmationInput.current.shake();
 
-            LayoutAnimation.easeInEaseOut();
-            setLoading(false);
-            setUsernameValid(!!(validateUsername(username) || usernameInput.current.shake()));
-            setPasswordValid(!!(password.length >= 8 || passwordInput.current.shake()));
-            setConfirmPasswordValid(
-                !!(password === confirmPassword || confirmationInput.current.shake())
-            );
-            if (
-                isUsernameValidFlag &&
-                isPasswordValidFlag &&
-                isConfirmPasswordValidFlag
-            ) {
-                Alert.alert('🙏', 'Welcome');
+        LayoutAnimation.easeInEaseOut();
+        setUsernameValid(!!(validateUsername(username) || usernameInput.current.shake()));
+        setPasswordValid(!!(password.length >= 8 || passwordInput.current.shake()));
+        setConfirmPasswordValid(
+            !!(password === confirmPassword || confirmationInput.current.shake())
+        );
+
+        if (
+            isUsernameValidFlag &&
+            isPasswordValidFlag &&
+            isConfirmPasswordValidFlag
+        ) {
+            try {
+                const res = await createUser(username, password);
+                if (!res.ok) {
+                    Alert.alert('用户名已存在', '换一个用户名试试');
+                    return;
+                }
+            } catch {
+                Alert.alert('🔗⁉️', '网络连接出错')
+                return;
+            } finally {
+                setLoading(false);
             }
-        });
+            Alert.alert('🎉', '注册成功');
+            navigation.goBack();
+        }
+        setLoading(false);
     };
 
     return (
         <View style={styles.container}>
             <ImageBackground
-                source={{ uri: 'http://img.heimao.icu/3000x3000bb.jpg' }}
+                source={{ uri: 'http://img.heimao.icu/75307614.jpg' }}
                 style={styles.bgImage}
             >
                 <View>
@@ -183,7 +204,7 @@ const LoginScreen: React.FunctionComponent<LoginScreenState> = (
                             onSubmitEditing={() => passwordInput.current.focus()}
                             onChangeText={(text) => setUsername(text)}
                             errorMessage={
-                                isUsernameValid ? '' : '请使用字母、数字、汉字与下划线组成用户名(16)'
+                                isUsernameValid ? '' : '用户名为字母、数字、汉字与下划线组成，最长16字'
                             }
                         />
                         <Input
@@ -215,7 +236,7 @@ const LoginScreen: React.FunctionComponent<LoginScreenState> = (
                             }}
                             onChangeText={(text) => setPassword(text)}
                             errorMessage={
-                                isPasswordValid ? '' : '密码长度过短(8)'
+                                isPasswordValid ? '' : '密码长度不小于8位'
                             }
                         />
                         {isSignUpPage && (
@@ -283,6 +304,7 @@ const styles = StyleSheet.create({
         width: '100%',
         alignItems: 'center',
         justifyContent: 'space-around',
+        backgroundColor: 'grey',
     },
     rowSelector: {
         height: 20,
