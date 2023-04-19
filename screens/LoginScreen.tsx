@@ -181,8 +181,8 @@ const LoginScreen: React.FunctionComponent<LoginScreenState> = (
                         <Input
                             leftIcon={
                                 <Icon
-                                    name="envelope-o"
-                                    type="font-awesome"
+                                    name="user"
+                                    type="simple-line-icon"
                                     color="rgba(0, 0, 0, 0.38)"
                                     size={25}
                                     style={{ backgroundColor: 'transparent' }}
