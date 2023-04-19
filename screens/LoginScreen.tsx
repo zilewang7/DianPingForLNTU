@@ -11,6 +11,7 @@ import {
     TextInput,
 } from 'react-native';
 import { Input, Button, Icon, InputProps } from '@rneui/themed';
+import { setItemAsync } from 'expo-secure-store';
 import { createUser, userLogin } from '../api/user.api';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
@@ -85,6 +86,7 @@ const LoginScreen: React.FunctionComponent<LoginScreenState> = (
                     Alert.alert('用户名或密码错误');
                     return;
                 }
+                setItemAsync('jwtToken', res.json.token);
             } catch {
                 Alert.alert('🔗⁉️', '网络连接出错')
                 return;

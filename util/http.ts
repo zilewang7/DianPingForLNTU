@@ -9,7 +9,7 @@ export async function postAPI(router: string, params = {}) {
     body: JSON.stringify(params),
   });
 
-  const res = {
+  const res: any = {
     ok: response.ok,
     json: {},
   };
