@@ -1,4 +1,5 @@
-const host = "10.0.0.136:3000";
+// const host = "10.0.0.136:3000"; // PC
+const host = "10.0.0.172:3000"; // Desktop
 
 export async function postAPI(router: string, params = {}) {
   const response = await fetch(`http://${host}${router}`, {
