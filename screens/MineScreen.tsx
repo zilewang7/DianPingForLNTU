@@ -15,14 +15,6 @@ function MineScreen({ navigation }) {
                 isCurrentUser
                 username={userInfo.username}
             />
-            <Button title={'登录/注册'} onPress={() => { navigation.navigate('登录/注册'); }} />
-            <Button title={'kktoken'} onPress={async () => {
-                const retrievedValue = await getItemAsync('jwtToken');
-                console.log(retrievedValue);
-            }} />
-            <Button title={'登出'} onPress={() => {
-                clearUserAuth();
-            }} />
         </View>
     )
 };

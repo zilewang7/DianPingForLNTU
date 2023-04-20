@@ -1,4 +1,4 @@
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, CommonActions } from '@react-navigation/native';
 import * as React from 'react';
 import {
     StyleSheet,
@@ -11,20 +11,35 @@ import { useSelector } from '../redux/hook';
 import { clearUserAuth } from '../util/user';
 
 
-export function HeaderRight() {
+export const HeaderRight = React.memo(() => {
     const navigation = useNavigation();
     const userInfo = useSelector(state => state.user);
     const isLogin = userInfo.username !== '未登录';
 
+    const handlePress = React.useCallback(() => {
+        if (isLogin) {
+            clearUserAuth();
+        } else {
+            navigation.dispatch(
+                CommonActions.navigate({
+                    name: '登录/注册',
+                    params: {
+                        screen: '登录/注册',
+                    },
+                })
+            );
+        }
+    }, [isLogin, navigation]);
+
     return (
-        <Pressable onPress={isLogin ? clearUserAuth : navigation.navigate.bind(this, '登录/注册')}>
+        <Pressable onPress={handlePress}>
             <View style={styles.buttonContainer}>
                 <Icon name={isLogin ? 'logout' : 'login'} size={16} type="antdesign" />
                 <Text> {isLogin && '退出'}登录</Text>
             </View>
         </Pressable>
     );
-}
+});
 
 const styles = StyleSheet.create({
     buttonContainer: {
