@@ -9,10 +9,14 @@ import {
     LayoutAnimation,
     UIManager,
     TextInput,
+    ScrollView,
+    Platform,
 } from 'react-native';
 import { Input, Button, Icon, InputProps } from '@rneui/themed';
+import { useHeaderHeight } from '@react-navigation/elements';
 import { createUser, userLogin } from '../api/user.api';
 import { setUserAuth } from '../util/user';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const SCREEN_HEIGHT = Dimensions.get('window').height;
@@ -54,6 +58,13 @@ const LoginScreen: React.FunctionComponent<LoginScreenState> = (
     const usernameInput = useRef<InputProps & TextInput>(null);
     const passwordInput = useRef<InputProps & TextInput>(null);
     const confirmationInput = useRef<InputProps & TextInput>(null);
+
+    // 使用 useSafeAreaInsets 钩子函数获取安全区域的边距
+    const insets = useSafeAreaInsets();
+    // 使用 useHeaderHeight 钩子函数获取 Header 的高度
+    const headerHeight = useHeaderHeight();
+    // 计算可用高度
+    const availableHeight = SCREEN_HEIGHT - headerHeight - ((Platform.OS === "ios") ? insets.top : 0);
 
     const isLoginPage = selectedCategory === 0;
     const isSignUpPage = selectedCategory === 1;
@@ -139,110 +150,78 @@ const LoginScreen: React.FunctionComponent<LoginScreenState> = (
     };
 
     return (
-        <View style={styles.container}>
-            <ImageBackground
-                source={{ uri: 'http://img.heimao.icu/75307614.jpg' }}
-                style={styles.bgImage}
-            >
-                <View>
-                    <View style={styles.titleContainer}>
-                        <View>
-                            <Text style={styles.titleText}>欢迎使用工大点评</Text>
+        <ScrollView>
+            <View style={{ ...styles.container, height: availableHeight }}>
+                <ImageBackground
+                    source={{ uri: 'http://img.heimao.icu/75307614.jpg' }}
+                    style={{ ...styles.bgImage, height: availableHeight }}
+                >
+                    <View>
+                        <View style={styles.titleContainer}>
+                            <View>
+                                <Text style={styles.titleText}>欢迎使用工大点评</Text>
+                            </View>
                         </View>
-                    </View>
-                    <View style={{ flexDirection: 'row' }}>
-                        <Button
-                            disabled={isLoading}
-                            type="clear"
-                            activeOpacity={0.7}
-                            onPress={() => selectCategory(0)}
-                            containerStyle={{ flex: 1 }}
-                            titleStyle={[
-                                styles.categoryText,
-                                isLoginPage && styles.selectedCategoryText,
-                            ]}
-                            title="登录"
-                        />
-                        <Button
-                            disabled={isLoading}
-                            type="clear"
-                            activeOpacity={0.7}
-                            onPress={() => selectCategory(1)}
-                            containerStyle={{ flex: 1 }}
-                            titleStyle={[
-                                styles.categoryText,
-                                isSignUpPage && styles.selectedCategoryText,
-                            ]}
-                            title="注册"
-                        />
-                    </View>
-                    <View style={styles.rowSelector}>
-                        <TabSelector selected={isLoginPage} />
-                        <TabSelector selected={isSignUpPage} />
-                    </View>
-                    <View style={styles.formContainer}>
-                        <Input
-                            leftIcon={
-                                <Icon
-                                    name="user"
-                                    type="simple-line-icon"
-                                    color="rgba(0, 0, 0, 0.38)"
-                                    size={25}
-                                    style={{ backgroundColor: 'transparent' }}
-                                />
-                            }
-                            value={username}
-                            keyboardAppearance="light"
-                            autoFocus={false}
-                            autoCapitalize="none"
-                            autoCorrect={false}
-                            keyboardType="default"
-                            returnKeyType="next"
-                            inputStyle={{ marginLeft: 10, color: 'grey' }}
-                            placeholder={'用户名'}
-                            containerStyle={{
-                                borderBottomColor: 'rgba(0, 0, 0, 0.38)',
-                            }}
-                            ref={usernameInput}
-                            onSubmitEditing={() => passwordInput.current.focus()}
-                            onChangeText={(text) => setUsername(text)}
-                            errorMessage={
-                                isUsernameValid ? '' : '用户名为字母、数字、汉字与下划线组成，最长16字'
-                            }
-                        />
-                        <Input
-                            leftIcon={
-                                <Icon
-                                    name="lock"
-                                    type="simple-line-icon"
-                                    color="rgba(0, 0, 0, 0.38)"
-                                    size={25}
-                                    style={{ backgroundColor: 'transparent' }}
-                                />
-                            }
-                            value={password}
-                            keyboardAppearance="light"
-                            autoCapitalize="none"
-                            autoCorrect={false}
-                            secureTextEntry={true}
-                            returnKeyType={isSignUpPage ? 'next' : 'done'}
-                            blurOnSubmit={true}
-                            containerStyle={{
-                                marginTop: 16,
-                                borderBottomColor: 'rgba(0, 0, 0, 0.38)',
-                            }}
-                            inputStyle={{ marginLeft: 10, color: 'grey' }}
-                            placeholder={'密码'}
-                            ref={passwordInput}
-                            onSubmitEditing={() => {
-                                isSignUpPage ? confirmationInput.current.focus() : login();
-                            }}
-                            onChangeText={(text) => setPassword(text)}
-                            errorMessage={
-                                isPasswordValid ? '' : '密码长度不小于8位'
-                            }
-                        />
-                        {isSignUpPage && (
+                        <View style={{ flexDirection: 'row' }}>
+                            <Button
+                                disabled={isLoading}
+                                type="clear"
+                                activeOpacity={0.7}
+                                onPress={() => selectCategory(0)}
+                                containerStyle={{ flex: 1 }}
+                                titleStyle={[
+                                    styles.categoryText,
+                                    isLoginPage && styles.selectedCategoryText,
+                                ]}
+                                title="登录"
+                            />
+                            <Button
+                                disabled={isLoading}
+                                type="clear"
+                                activeOpacity={0.7}
+                                onPress={() => selectCategory(1)}
+                                containerStyle={{ flex: 1 }}
+                                titleStyle={[
+                                    styles.categoryText,
+                                    isSignUpPage && styles.selectedCategoryText,
+                                ]}
+                                title="注册"
+                            />
+                        </View>
+                        <View style={styles.rowSelector}>
+                            <TabSelector selected={isLoginPage} />
+                            <TabSelector selected={isSignUpPage} />
+                        </View>
+                        <View style={styles.formContainer}>
+                            <Input
+                                leftIcon={
+                                    <Icon
+                                        name="user"
+                                        type="simple-line-icon"
+                                        color="rgba(0, 0, 0, 0.38)"
+                                        size={25}
+                                        style={{ backgroundColor: 'transparent' }}
+                                    />
+                                }
+                                value={username}
+                                keyboardAppearance="light"
+                                autoFocus={false}
+                                autoCapitalize="none"
+                                autoCorrect={false}
+                                keyboardType="default"
+                                returnKeyType="next"
+                                inputStyle={{ marginLeft: 10, color: 'grey' }}
+                                placeholder={'用户名'}
+                                containerStyle={{
+                                    borderBottomColor: 'rgba(0, 0, 0, 0.38)',
+                                }}
+                                ref={usernameInput}
+                                onSubmitEditing={() => passwordInput.current.focus()}
+                                onChangeText={(text) => setUsername(text)}
+                                errorMessage={
+                                    isUsernameValid ? '' : '用户名为字母、数字、汉字与下划线组成，最长16字'
+                                }
+                            />
                             <Input
                                 leftIcon={
                                     <Icon
@@ -253,56 +232,90 @@ const LoginScreen: React.FunctionComponent<LoginScreenState> = (
                                         style={{ backgroundColor: 'transparent' }}
                                     />
                                 }
-                                value={confirmPassword}
-                                secureTextEntry={true}
+                                value={password}
                                 keyboardAppearance="light"
                                 autoCapitalize="none"
                                 autoCorrect={false}
-                                keyboardType="default"
-                                returnKeyType={'done'}
+                                secureTextEntry={true}
+                                returnKeyType={isSignUpPage ? 'next' : 'done'}
                                 blurOnSubmit={true}
                                 containerStyle={{
                                     marginTop: 16,
                                     borderBottomColor: 'rgba(0, 0, 0, 0.38)',
                                 }}
                                 inputStyle={{ marginLeft: 10, color: 'grey' }}
-                                placeholder={'确认密码'}
-                                ref={confirmationInput}
-                                onSubmitEditing={signUp}
-                                onChangeText={(text) => setConfirmPassword(text)}
+                                placeholder={'密码'}
+                                ref={passwordInput}
+                                onSubmitEditing={() => {
+                                    isSignUpPage ? confirmationInput.current.focus() : login();
+                                }}
+                                onChangeText={(text) => setPassword(text)}
                                 errorMessage={
-                                    isConfirmPasswordValid ? '' : '请输入相同的密码'
+                                    isPasswordValid ? '' : '密码长度不小于8位'
                                 }
                             />
-                        )}
-                        <Button
-                            buttonStyle={styles.loginButton}
-                            containerStyle={{ marginTop: 32, flex: 0 }}
-                            activeOpacity={0.8}
-                            title={isLoginPage ? '登录' : '注册'}
-                            onPress={isLoginPage ? login : signUp}
-                            titleStyle={styles.loginTextButton}
-                            loading={isLoading}
-                            disabled={isLoading}
-                        />
+                            {isSignUpPage && (
+                                <Input
+                                    leftIcon={
+                                        <Icon
+                                            name="lock"
+                                            type="simple-line-icon"
+                                            color="rgba(0, 0, 0, 0.38)"
+                                            size={25}
+                                            style={{ backgroundColor: 'transparent' }}
+                                        />
+                                    }
+                                    value={confirmPassword}
+                                    secureTextEntry={true}
+                                    keyboardAppearance="light"
+                                    autoCapitalize="none"
+                                    autoCorrect={false}
+                                    keyboardType="default"
+                                    returnKeyType={'done'}
+                                    blurOnSubmit={true}
+                                    containerStyle={{
+                                        marginTop: 16,
+                                        borderBottomColor: 'rgba(0, 0, 0, 0.38)',
+                                    }}
+                                    inputStyle={{ marginLeft: 10, color: 'grey' }}
+                                    placeholder={'确认密码'}
+                                    ref={confirmationInput}
+                                    onSubmitEditing={signUp}
+                                    onChangeText={(text) => setConfirmPassword(text)}
+                                    errorMessage={
+                                        isConfirmPasswordValid ? '' : '请输入相同的密码'
+                                    }
+                                />
+                            )}
+                            <Button
+                                buttonStyle={styles.loginButton}
+                                containerStyle={{ marginTop: 32, flex: 0 }}
+                                activeOpacity={0.8}
+                                title={isLoginPage ? '登录' : '注册'}
+                                onPress={isLoginPage ? login : signUp}
+                                titleStyle={styles.loginTextButton}
+                                loading={isLoading}
+                                disabled={isLoading}
+                            />
+                        </View>
+                        <View style={styles.helpContainer}>
+                            <Button
+                                title={'需要帮助?'}
+                                titleStyle={{ color: 'white' }}
+                                buttonStyle={{ backgroundColor: 'transparent' }}
+                                onPress={() => Alert.alert('😭', '暂未支持忘记密码功能')}
+                            />
+                        </View>
                     </View>
-                    <View style={styles.helpContainer}>
-                        <Button
-                            title={'需要帮助?'}
-                            titleStyle={{ color: 'white' }}
-                            buttonStyle={{ backgroundColor: 'transparent' }}
-                            onPress={() => Alert.alert('😭', '暂未支持忘记密码功能')}
-                        />
-                    </View>
-                </View>
-            </ImageBackground>
-        </View>
+                </ImageBackground>
+            </View>
+        </ScrollView>
     );
 };
 
 const styles = StyleSheet.create({
     container: {
-        flexGrow: 1,
+        // flexGrow: 1,
         paddingBottom: 20,
         width: '100%',
         alignItems: 'center',
@@ -362,7 +375,6 @@ const styles = StyleSheet.create({
         top: 0,
         left: 0,
         width: '100%',
-        height: SCREEN_HEIGHT,
         justifyContent: 'center',
         alignItems: 'center',
     },

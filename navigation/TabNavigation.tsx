@@ -5,6 +5,7 @@ import ModelScreen from '../screens/3DModelScreen';
 import HomeScreen from '../screens/HomeScreen';
 import MineScreen from '../screens/MineScreen';
 import { HeaderRight } from '../components/HeaderTitle';
+import { Platform } from 'react-native';
 
 const Tab = createBottomTabNavigator();
 
@@ -13,6 +14,8 @@ export function TabNavigation() {
 
     const listeners = ({ navigation }) => ({
         tabPress: (e) => {
+            if (Platform.OS === "ios") return;
+
             // 检查当前tab
             const currentRoute = navigation.getState().routes[navigation.getState().index].name;
             if (currentRoute !== '食堂' && !e.target.indexOf('食堂')) {
@@ -24,6 +27,11 @@ export function TabNavigation() {
                 // 阻止 tab 切换
                 e.preventDefault();
             }
+
+            // 兜底策略，2.5秒后解锁
+            setTimeout(() => {
+                setTabSwitchAllowed(true);
+            }, 2500)
         },
     });
 
