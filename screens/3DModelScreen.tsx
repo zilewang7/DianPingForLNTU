@@ -1,7 +1,7 @@
 import { ButtonGroup } from '@rneui/themed';
 import React, { useEffect, useState } from 'react'
 import { View, StyleSheet, Text } from 'react-native';
-import { ModalCard } from '../components/modalCard';
+import { ModalCard } from '../components/components/modalCard';
 import { MyDormitory } from '../components/threeJS/MyDormitory';
 
 

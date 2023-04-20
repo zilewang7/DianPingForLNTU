@@ -2,8 +2,10 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { ThemeProvider, createTheme } from '@rneui/themed';
 import * as SplashScreen from 'expo-splash-screen';
+import { Provider } from 'react-redux';
+import { PersistGate } from 'redux-persist/integration/react';
+import { store, persistor } from './redux/store';
 import { PresetTheme } from './constants/themes';
-import { ModeView } from './components/ModeView';
 import { RootNavigator } from './navigation/RootNavigator';
 
 SplashScreen.preventAutoHideAsync();
@@ -39,9 +41,11 @@ export default function App() {
   return (
     <SafeAreaProvider>
       <ThemeProvider theme={createTheme(PresetTheme.default)}>
-        <ModeView>
-            <RootNavigator onReady={onLayoutRootView}/>
-        </ModeView>
+        <Provider store={store}>
+          <PersistGate loading={null} persistor={persistor}>
+            <RootNavigator onReady={onLayoutRootView} />
+          </PersistGate>
+        </Provider>
       </ThemeProvider>
     </SafeAreaProvider>
   );

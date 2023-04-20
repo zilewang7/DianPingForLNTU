@@ -4,11 +4,13 @@ import { useTheme } from "@rneui/themed";
 import { TabNavigation } from "./TabNavigation";
 import { ModalNavigation } from "./ModalNavigation";
 import { createStackNavigator } from "@react-navigation/stack";
+import { useAppearanceChangeListener } from "../util/theme-hook";
 
 const RootStack = createStackNavigator();
 
 export const RootNavigator = ({ onReady }) => {
     const { theme } = useTheme();
+    useAppearanceChangeListener()
 
     return (
         <NavigationContainer onReady={onReady} theme={{

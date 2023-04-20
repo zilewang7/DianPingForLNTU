@@ -1,19 +1,8 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { combineReducers } from "@reduxjs/toolkit";
+import userReducer from "./slices/userSlice";
 
-// 创建 Redux slice
-const userSlice = createSlice({
-  name: 'user',
-  initialState: {},
-  reducers: {
-    setUser: (state, action) => {
-      return action.payload;
-    },
-    clearUser: (state) => {
-      return {};
-    },
-  },
+const rootReducer = combineReducers({
+  user: userReducer,
 });
 
-// 导出 reducer 和 actions
-export const { setUser, clearUser } = userSlice.actions;
-export default userSlice.reducer;
+export default rootReducer;

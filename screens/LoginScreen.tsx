@@ -11,8 +11,8 @@ import {
     TextInput,
 } from 'react-native';
 import { Input, Button, Icon, InputProps } from '@rneui/themed';
-import { setItemAsync } from 'expo-secure-store';
 import { createUser, userLogin } from '../api/user.api';
+import { setUserAuth } from '../util/user';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const SCREEN_HEIGHT = Dimensions.get('window').height;
@@ -86,7 +86,7 @@ const LoginScreen: React.FunctionComponent<LoginScreenState> = (
                     Alert.alert('用户名或密码错误');
                     return;
                 }
-                setItemAsync('jwtToken', res.json.token);
+                setUserAuth(res.json);
             } catch {
                 Alert.alert('🔗⁉️', '网络连接出错')
                 return;
@@ -125,6 +125,7 @@ const LoginScreen: React.FunctionComponent<LoginScreenState> = (
                     Alert.alert('用户名已存在', '换一个用户名试试');
                     return;
                 }
+                setUserAuth(res.json);
             } catch {
                 Alert.alert('🔗⁉️', '网络连接出错')
                 return;

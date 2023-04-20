@@ -4,6 +4,7 @@ import { Icon } from '@rneui/themed';
 import ModelScreen from '../screens/3DModelScreen';
 import HomeScreen from '../screens/HomeScreen';
 import MineScreen from '../screens/MineScreen';
+import { HeaderRight } from '../components/HeaderTitle';
 
 const Tab = createBottomTabNavigator();
 
@@ -59,6 +60,7 @@ export function TabNavigation() {
                     tabBarIcon: ({ color, size }) => (
                         <Icon name="user" color={color} size={size} type="antdesign" />
                     ),
+                    headerRight: () => (<HeaderRight />)
                 }}
                 listeners={listeners}
             />
