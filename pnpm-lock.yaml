@@ -49,6 +49,12 @@ dependencies:
   expo-gl:
     specifier: ~12.4.0
     version: 12.4.0(expo@48.0.10)
+  expo-image-manipulator:
+    specifier: ~11.1.1
+    version: 11.1.1(expo@48.0.10)
+  expo-image-picker:
+    specifier: ~14.1.1
+    version: 14.1.1(expo@48.0.10)
   expo-secure-store:
     specifier: ~12.1.1
     version: 12.1.1(expo@48.0.10)
@@ -73,6 +79,12 @@ dependencies:
   react-native-gesture-handler:
     specifier: ^2.9.0
     version: 2.9.0(react-native@0.71.6)(react@18.2.0)
+  react-native-image-zoom-viewer:
+    specifier: ^3.0.1
+    version: 3.0.1(react-native@0.71.6)(react@18.2.0)
+  react-native-qiniu:
+    specifier: git+https://git@github.com/sishuguojixuefu/react-native-sdk.git
+    version: github.com/sishuguojixuefu/react-native-sdk/2126e72fe2c0c0ef684b497dbd2461e2d2e39e47
   react-native-safe-area-context:
     specifier: ^4.5.0
     version: 4.5.0(react-native@0.71.6)(react@18.2.0)
@@ -2989,6 +3001,10 @@ packages:
     resolution: {integrity: sha512-3oSeUO0TMV67hN1AmbXsK4yaqU7tjiHlbxRDZOpH0KW9+CeX4bRAaX0Anxt0tx2MrpRpWwQaPwIlISEJhYU5Pw==}
     dev: false
 
+  /base-64@0.1.0:
+    resolution: {integrity: sha512-Y5gU45svrR5tI2Vt/X9GPd3L0HNIKzGu202EjxrXMpuc2V2CiKgemAbUUsqYmZJvPtCXoUKjNZwBJzsNScUbXA==}
+    dev: false
+
   /base64-js@1.5.1:
     resolution: {integrity: sha512-AKpaYlHn8t4SVbOHCy+b5+KKgvR4vrsD8vbvrbiQJps7fKDTkjkDry6ji0rUJjC0kzbNePLwzxq8iypo41qeWA==}
     dev: false
@@ -3582,6 +3598,10 @@ packages:
     resolution: {integrity: sha512-mCxBlsHFYh9C+HVpiEacem8FEBnMXgU9gy4zmNC+SXAZNB/1idgp/aulFJ4FgCi7GPEVbfyng092GqL2k2rmow==}
     dev: false
 
+  /crypto-js@3.3.0:
+    resolution: {integrity: sha512-DIT51nX0dCfKltpRiXV+/TVZq+Qq2NgF4644+K7Ttnla7zEzqc+kjJyiB96BHNyUTBxyjzRcZYpUdZa+QAqi6Q==}
+    dev: false
+
   /crypto-js@4.1.1:
     resolution: {integrity: sha512-o2JlM7ydqd3Qk9CA0L4NL6mTzU2sdx96a+oOfPu8Mkl/PK51vSyoi8/rQ8NknZtk44vq15lmhAj9CIAGwgeWKw==}
     dev: false
@@ -4015,6 +4035,32 @@ packages:
     dependencies:
       expo: 48.0.10(@babel/core@7.20.2)
       invariant: 2.2.4
+    dev: false
+
+  /expo-image-loader@4.1.1(expo@48.0.10):
+    resolution: {integrity: sha512-ciEHVokU0f6w0eTxdRxLCio6tskMsjxWIoV92+/ZD37qePUJYMfEphPhu1sruyvMBNR8/j5iyOvPFVGTfO8oxA==}
+    peerDependencies:
+      expo: '*'
+    dependencies:
+      expo: 48.0.10(@babel/core@7.20.2)
+    dev: false
+
+  /expo-image-manipulator@11.1.1(expo@48.0.10):
+    resolution: {integrity: sha512-W9LfJK/IL7EhhkkC1JQnEX/1S9B09rcGasJiQjXc2s1bEsrQnqXvXEv7shUW8b/L8rE+ynf+XvvDE+YIDL7oFg==}
+    peerDependencies:
+      expo: '*'
+    dependencies:
+      expo: 48.0.10(@babel/core@7.20.2)
+      expo-image-loader: 4.1.1(expo@48.0.10)
+    dev: false
+
+  /expo-image-picker@14.1.1(expo@48.0.10):
+    resolution: {integrity: sha512-SvWtnkLW7jp5Ntvk3lVcRQmhFYja8psmiR7O6P/+7S6f4llt3vaFwb4I3+pUXqJxxpi7BHc2+95qOLf0SFOIag==}
+    peerDependencies:
+      expo: '*'
+    dependencies:
+      expo: 48.0.10(@babel/core@7.20.2)
+      expo-image-loader: 4.1.1(expo@48.0.10)
     dev: false
 
   /expo-keep-awake@12.0.1(expo@48.0.10):
@@ -6598,6 +6644,27 @@ packages:
     resolution: {integrity: sha512-OXXYgpISEqERwjSlaCiaQY6cTY5CH6j73gdkWpK0hedxtiWMWgH+i5TOi4hIGYitm9kQBeyDu+wim9fA8ROFJA==}
     dev: false
 
+  /react-native-image-pan-zoom@2.1.12(react-native@0.71.6)(react@18.2.0):
+    resolution: {integrity: sha512-BF66XeP6dzuANsPmmFsJshM2Jyh/Mo1t8FsGc1L9Q9/sVP8MJULDabB1hms+eAoqgtyhMr5BuXV3E1hJ5U5H6Q==}
+    peerDependencies:
+      react: '*'
+      react-native: '*'
+    dependencies:
+      react: 18.2.0
+      react-native: 0.71.6(@babel/core@7.20.2)(@babel/preset-env@7.21.4)(react@18.2.0)
+    dev: false
+
+  /react-native-image-zoom-viewer@3.0.1(react-native@0.71.6)(react@18.2.0):
+    resolution: {integrity: sha512-la6s5DNSuq4GCRLsi5CZ29FPjgTpdCuGIRdO5T9rUrAtxrlpBPhhSnHrbmPVxsdtOUvxHacTh2Gfa9+RraMZQA==}
+    peerDependencies:
+      react: '*'
+      react-native: '*'
+    dependencies:
+      react: 18.2.0
+      react-native: 0.71.6(@babel/core@7.20.2)(@babel/preset-env@7.21.4)(react@18.2.0)
+      react-native-image-pan-zoom: 2.1.12(react-native@0.71.6)(react@18.2.0)
+    dev: false
+
   /react-native-ratings@8.1.0(react-native@0.71.6)(react@18.2.0):
     resolution: {integrity: sha512-+QOJ4G3NjVkI1D+tk4EGx1dCvVfbD2nQdkrj9cXrcAoEiwmbep4z4bZbCKmWMpQ5h2dqbxABU8/eBnbDmvAc3g==}
     peerDependencies:
@@ -8253,4 +8320,14 @@ packages:
         optional: true
     dependencies:
       react: 18.2.0
+    dev: false
+
+  github.com/sishuguojixuefu/react-native-sdk/2126e72fe2c0c0ef684b497dbd2461e2d2e39e47:
+    resolution: {commit: 2126e72fe2c0c0ef684b497dbd2461e2d2e39e47, repo: https://git@github.com/sishuguojixuefu/react-native-sdk.git, type: git}
+    name: '@sishuguojixuefu/react-native-qiniu'
+    version: 0.3.0
+    dependencies:
+      base-64: 0.1.0
+      crypto-js: 3.3.0
+      url-parse: 1.5.10
     dev: false
