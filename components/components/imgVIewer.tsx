@@ -1,7 +1,8 @@
-import { BottomSheet, ListItem } from '@rneui/base';
-import React, { useState } from 'react';
-import { Modal, Text, View } from 'react-native';
+import { ListItem } from '@rneui/base';
+import React from 'react';
+import { Modal, View } from 'react-native';
 import ImageViewer from 'react-native-image-zoom-viewer';
+import { saveImg } from '../../util/img';
 
 
 export function MyImageViewer({ visible, onCancel, images, index = 0 }) {
@@ -27,6 +28,7 @@ export function MyImageViewer({ visible, onCancel, images, index = 0 }) {
                 imageUrls={images}
                 index={index}
                 onClick={() => { onCancel() }}
+                onSave={(imageUri) => saveImg(imageUri)}
                 menus={({ cancel, saveToLocal }) => (
                     <View style={{ flex: 1 }} >
                         <View style={{ flex: 1 }} />

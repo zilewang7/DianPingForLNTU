@@ -17,9 +17,9 @@ export function UserView({ isCurrentUser = false, username, avatarUrl }: UserInf
     const [visible, setVisible] = useState(false);
 
     const pickAvatar = async () => {
-        const result = await pickImage(true) as ImageResult;
-        if (result) {
-            setImage(result.uri);
+        const uri = await pickImage(true) as ImageResult;
+        if (uri) {
+            setImage(uri);
         }
     };
 

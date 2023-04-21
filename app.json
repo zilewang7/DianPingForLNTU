@@ -22,6 +22,22 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       }
-    }
+    },
+    "plugins": [
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "允许获取图片"
+        }
+      ],
+      [
+        "expo-media-library",
+        {
+          "photosPermission": "允许获取图片",
+          "savePhotosPermission": "允许保存图片到本地",
+          "isAccessMediaLocationEnabled": true
+        }
+      ]
+    ]
   }
 }

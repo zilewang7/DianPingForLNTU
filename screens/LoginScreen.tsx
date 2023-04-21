@@ -153,7 +153,7 @@ const LoginScreen: React.FunctionComponent<LoginScreenState> = (
         <ScrollView>
             <View style={{ ...styles.container, height: availableHeight }}>
                 <ImageBackground
-                    source={{ uri: 'http://img.heimao.icu/75307614.jpg' }}
+                    source={{ uri: 'http://img.heimao.icu/dianping/75307614.jpg' }}
                     style={{ ...styles.bgImage, height: availableHeight }}
                 >
                     <View>
