@@ -63,8 +63,10 @@ const LoginScreen: React.FunctionComponent<LoginScreenState> = (
     const insets = useSafeAreaInsets();
     // 使用 useHeaderHeight 钩子函数获取 Header 的高度
     const headerHeight = useHeaderHeight();
+
+    const wh = SCREEN_HEIGHT / SCREEN_WIDTH;
     // 计算可用高度
-    const availableHeight = SCREEN_HEIGHT - headerHeight - ((Platform.OS === "ios") ? insets.top : 0);
+    const availableHeight = SCREEN_HEIGHT - headerHeight + ((Platform.OS === "ios") ? -insets.top : (wh > 1.8 ? insets.top : 0));
 
     const isLoginPage = selectedCategory === 0;
     const isSignUpPage = selectedCategory === 1;

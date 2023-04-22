@@ -1,6 +1,7 @@
 import { Avatar } from '@rneui/themed';
 import React from 'react'
-import { StyleSheet, Image } from 'react-native';
+import { StyleSheet } from 'react-native';
+import { Image } from 'expo-image';
 
 
 
@@ -12,6 +13,7 @@ export function MyAvatar({ avatarUrl, children, onAvatarPress }) {
             rounded
             source={avatarUrl && { uri: avatarUrl }}
             renderPlaceholderContent={<Image source={require('../../assets/Transparent_Akkarin_Transparentized.png')} style={styles.defaultAvatar} />}
+            ImageComponent={Image}
             onPress={onAvatarPress}
         >
             {children}

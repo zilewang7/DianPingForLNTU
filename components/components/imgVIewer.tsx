@@ -1,6 +1,6 @@
 import { ListItem } from '@rneui/base';
 import React from 'react';
-import { Modal, View } from 'react-native';
+import { Modal, View, Pressable } from 'react-native';
 import ImageViewer from 'react-native-image-zoom-viewer';
 import { saveImg } from '../../util/img';
 
@@ -29,9 +29,11 @@ export function MyImageViewer({ visible, onCancel, images, index = 0 }) {
                 index={index}
                 onClick={() => { onCancel() }}
                 onSave={(imageUri) => saveImg(imageUri)}
+                enableSwipeDown={true}
+                onSwipeDown={() => { onCancel() }}
                 menus={({ cancel, saveToLocal }) => (
                     <View style={{ flex: 1 }} >
-                        <View style={{ flex: 1 }} />
+                        <Pressable onPress={cancel} style={{ flex: 1 }} />
                         {list.map((l, i) => (
                             <ListItem
                                 key={i}

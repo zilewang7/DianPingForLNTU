@@ -49,6 +49,9 @@ dependencies:
   expo-gl:
     specifier: ~12.4.0
     version: 12.4.0(expo@48.0.10)
+  expo-image:
+    specifier: ~1.0.0
+    version: 1.0.0(expo@48.0.10)
   expo-image-manipulator:
     specifier: ~11.1.1
     version: 11.1.1(expo@48.0.10)
@@ -4064,6 +4067,14 @@ packages:
     dependencies:
       expo: 48.0.10(@babel/core@7.20.2)
       expo-image-loader: 4.1.1(expo@48.0.10)
+    dev: false
+
+  /expo-image@1.0.0(expo@48.0.10):
+    resolution: {integrity: sha512-A1amVExKhBa/eRXuceauYtPkf9izeje5AbxEWL09tgK91rf3GSIZXM5PSDGlIM0s7dpCV+Iet2jhwcFUfWaZrw==}
+    peerDependencies:
+      expo: '*'
+    dependencies:
+      expo: 48.0.10(@babel/core@7.20.2)
     dev: false
 
   /expo-keep-awake@12.0.1(expo@48.0.10):
