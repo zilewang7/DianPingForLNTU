@@ -1,7 +1,7 @@
 import * as ImagePicker from "expo-image-picker";
 import { SaveFormat, manipulateAsync } from "expo-image-manipulator";
 import * as MediaLibrary from "expo-media-library";
-
+import { getAPI, postAPI } from "./http";
 
 const cutImg = async (uri) => {
   const { width, height } = await manipulateAsync(uri, []);
@@ -55,5 +55,43 @@ export const saveImg = async (imageUri) => {
     const asset = await MediaLibrary.createAssetAsync(imageUri);
     await MediaLibrary.createAlbumAsync("工大点评", asset, false);
     alert("图片已保存到相册！");
+  }
+};
+
+export const uploadImg = async (uri, type = "unclassifi") => {
+  const sign = await getAPI("/oos/uploadSgin");
+
+  if (sign.ok) {
+    const { policy, OSSAccessKeyId, signature } = sign.json;
+
+    // const result = await postAPI("http://img.heimao.icu", {
+    //   OSSAccessKeyId: OSSAccessKeyId,
+    //   key: `dianping/${type}`,
+    //   policy: policy,
+    //   success_action_status: "200", // 如果不设置success_action_status为200，则文件上传成功后返回204状态码。
+    //   signature: signature,
+    // });
+
+    // return result;
+
+    const formData = new FormData();
+    formData.append("key", `dianping/${type}`);
+    formData.append("policy", policy);
+    formData.append("OSSAccessKeyId", OSSAccessKeyId);
+    formData.append("signature", signature);
+    formData.append("file", uri);
+
+    fetch("http://img.heimao.icu", {
+      method: "POST",
+      body: formData,
+    })
+      .then((response) => {
+        // 处理上传成功的响应
+        console.log("上传成功", response);
+      })
+      .catch((error) => {
+        // 处理上传失败的错误
+        console.log("上传失败", error);
+      });
   }
 };

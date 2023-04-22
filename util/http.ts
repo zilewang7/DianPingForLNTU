@@ -25,3 +25,22 @@ export async function postAPI(router: string, params = {}) {
 
   return res;
 }
+
+export async function getAPI(router: string) {
+  const response = await fetch(`http://${host}${router}`, { method: "GET" });
+
+  const res: any = {
+    ok: response.ok,
+    json: {},
+  };
+
+  if (response.ok) {
+    try {
+      res.json = await response.json();
+    } catch (e) {
+      console.warn(e);
+    }
+  }
+
+  return res;
+}

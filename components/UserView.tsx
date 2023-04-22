@@ -2,7 +2,7 @@ import { Avatar } from '@rneui/themed';
 import React, { useState } from 'react'
 import { View, Text, StyleSheet } from 'react-native';
 import { MyAvatar } from './components/avatar';
-import { pickImage } from '../util/img';
+import { pickImage, uploadImg } from '../util/img';
 import { MyImageViewer } from './components/imgVIewer';
 import { ImageResult } from 'expo-image-manipulator';
 
@@ -19,7 +19,10 @@ export function UserView({ isCurrentUser = false, username, avatarUrl }: UserInf
     const pickAvatar = async () => {
         const uri = await pickImage(true) as ImageResult;
         if (uri) {
-            setImage(uri);
+            // setImage(uri);
+            const result = await uploadImg(uri, 'Avatar');
+            console.log(result);
+
         }
     };
 
