@@ -19,10 +19,9 @@ export function UserView({ isCurrentUser = false, username, avatarUrl }: UserInf
     const pickAvatar = async () => {
         const uri = await pickImage(true) as ImageResult;
         if (uri) {
-            // setImage(uri);
             const result = await uploadImg(uri, 'Avatar');
-            console.log(result);
 
+            setImage(result);
         }
     };
 

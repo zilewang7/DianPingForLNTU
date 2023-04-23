@@ -2,6 +2,7 @@ import * as ImagePicker from "expo-image-picker";
 import { SaveFormat, manipulateAsync } from "expo-image-manipulator";
 import * as MediaLibrary from "expo-media-library";
 import { getAPI, postAPI } from "./http";
+import { Alert } from "react-native";
 
 const cutImg = async (uri) => {
   const { width, height } = await manipulateAsync(uri, []);
@@ -22,7 +23,7 @@ const cutImg = async (uri) => {
         },
       },
     ],
-    { format: SaveFormat.PNG }
+    { format: SaveFormat.JPEG }
   );
   return result.uri;
 };
@@ -36,7 +37,7 @@ export const pickImage = async (isAvatar = false) => {
       quality: 0.7,
     });
 
-    if (!result.canceled && isAvatar) {
+    if (!result.canceled) {
       if (isAvatar) {
         const newResult = await cutImg(result.assets[0].uri);
         return newResult;
@@ -58,40 +59,37 @@ export const saveImg = async (imageUri) => {
   }
 };
 
-export const uploadImg = async (uri, type = "unclassifi") => {
+export const uploadImg = async (uri, type = "unclassified") => {
   const sign = await getAPI("/oos/uploadSgin");
 
   if (sign.ok) {
     const { policy, OSSAccessKeyId, signature } = sign.json;
 
-    // const result = await postAPI("http://img.heimao.icu", {
-    //   OSSAccessKeyId: OSSAccessKeyId,
-    //   key: `dianping/${type}`,
-    //   policy: policy,
-    //   success_action_status: "200", // 如果不设置success_action_status为200，则文件上传成功后返回204状态码。
-    //   signature: signature,
-    // });
-
-    // return result;
+    const fileName = uri.substring(uri.lastIndexOf("/") + 1);
 
     const formData = new FormData();
-    formData.append("key", `dianping/${type}`);
+    formData.append("key", `dianping/${type}/${fileName}`);
     formData.append("policy", policy);
     formData.append("OSSAccessKeyId", OSSAccessKeyId);
-    formData.append("signature", signature);
-    formData.append("file", uri);
+    formData.append("Signature", signature);
+    formData.append("Cache-Control", 'public');
+    formData.append("file", {
+      uri: uri,
+      type: "image/jpeg",
+      name: fileName,
+    } as unknown as Blob);
 
-    fetch("http://img.heimao.icu", {
-      method: "POST",
-      body: formData,
-    })
-      .then((response) => {
-        // 处理上传成功的响应
-        console.log("上传成功", response);
-      })
-      .catch((error) => {
-        // 处理上传失败的错误
-        console.log("上传失败", error);
+    try {
+      const response = await fetch("http://img.heimao.icu", {
+        method: "POST",
+        body: formData,
       });
+
+      if (response.ok) {
+        return `http://img.heimao.icu/dianping/${type}/${fileName}`;
+      }
+    } catch {
+      Alert.alert("上传失败");
+    }
   }
 };
