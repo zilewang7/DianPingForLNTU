@@ -4,7 +4,8 @@ import { View, Text, StyleSheet } from 'react-native';
 import { MyAvatar } from './components/avatar';
 import { pickImage, uploadImg } from '../util/img';
 import { MyImageViewer } from './components/imgVIewer';
-import { ImageResult } from 'expo-image-manipulator';
+import { useDispatch } from 'react-redux';
+import { updateUser } from '../redux/slices/userSlice';
 
 interface UserInfo {
     isCurrentUser: boolean,
@@ -13,15 +14,15 @@ interface UserInfo {
 }
 
 export function UserView({ isCurrentUser = false, username, avatarUrl }: UserInfo) {
-    const [image, setImage] = useState(null);
     const [visible, setVisible] = useState(false);
+    const dispatch = useDispatch();
 
     const pickAvatar = async () => {
-        const uri = await pickImage(true) as ImageResult;
+        const uri = await pickImage(true);
         if (uri) {
             const result = await uploadImg(uri, 'Avatar');
 
-            setImage(result);
+            dispatch(updateUser({ avatarUrl: result }))
         }
     };
 
@@ -29,7 +30,7 @@ export function UserView({ isCurrentUser = false, username, avatarUrl }: UserInf
         <View>
             <View style={styles.baseInfoContainer}>
                 <MyAvatar
-                    avatarUrl={image}
+                    avatarUrl={avatarUrl}
                     onAvatarPress={() => {
                         setVisible(true)
                     }}
@@ -41,7 +42,7 @@ export function UserView({ isCurrentUser = false, username, avatarUrl }: UserInf
             <MyImageViewer
                 visible={visible}
                 onCancel={setVisible.bind(this, false)}
-                images={[{ url: image }]}
+                images={[{ url: avatarUrl }]}
             />
         </View>
     )

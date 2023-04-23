@@ -11,6 +11,7 @@ function MineScreen({ navigation }) {
             <UserView
                 isCurrentUser
                 username={userInfo.username}
+                avatarUrl={userInfo.avatarUrl}
             />
         </ScrollView>
     )
