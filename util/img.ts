@@ -14,12 +14,13 @@ const compressImg = async (uri: string, maxSize = 1000) => {
       uri
     )) as FileSystem.FileInfo & { size: number };
     let action = [];
-    if (preSize === fileInfo.size) {
+
+    if (preSize * 0.9 < fileInfo.size) {
       const { width, height } = await manipulateAsync(uri, []);
       action[0] = {
         resize: {
-          height: Math.floor(height * 0.7),
-          width: Math.floor(width * 0.7),
+          height: Math.floor(height * 0.8),
+          width: Math.floor(width * 0.8),
         },
       };
     }
