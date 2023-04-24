@@ -31,7 +31,7 @@ export function UserView({ isCurrentUser = false, username, avatarUrl }: UserInf
     const Info = ({ title, num = 0 }) =>
     (<View style={styles.infoContainer}>
         <Text style={styles.infoTitle}>{title}</Text>
-        <Text style={{padding:4}}>{num}</Text>
+        <Text style={{ padding: 4 }}>{num}</Text>
     </View>)
 
     return (
@@ -59,10 +59,10 @@ export function UserView({ isCurrentUser = false, username, avatarUrl }: UserInf
                             }
                         } : undefined}
                     >
-                        {isCurrentUser && username !== '未登录' && <Avatar.Accessory size={18} onPress={pickAvatar} />}
+                        {isCurrentUser && username !== '未登录' && <Avatar.Accessory size={20} onPress={pickAvatar} />}
                     </MyAvatar>
                     <View style={styles.usernameContainer}>
-                        <Text style={styles.username}>{username}</Text>
+                        <Text style={styles.username}>{username} </Text>
                         {isCurrentUser || <Button title='+关注' size="sm" containerStyle={{ marginHorizontal: 10 }} />}
                     </View>
                 </View>
@@ -104,6 +104,7 @@ const styles = StyleSheet.create({
     },
     vertical: {
         padding: 20,
+        paddingBottom: 0,
         flexDirection: 'row',
         justifyContent: 'space-evenly',
     },

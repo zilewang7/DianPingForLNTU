@@ -1,7 +1,7 @@
-import { ListItem } from '@rneui/base';
 import React from 'react';
-import { Modal, View, Pressable } from 'react-native';
 import ImageViewer from 'react-native-image-zoom-viewer';
+import { ListItem } from '@rneui/base';
+import { Modal, View, Pressable, Vibration } from 'react-native';
 import { saveImg } from '../../util/img';
 
 
@@ -31,6 +31,7 @@ export function MyImageViewer({ visible, onCancel, images, index = 0 }) {
                 onSave={(imageUri) => saveImg(imageUri)}
                 enableSwipeDown={true}
                 onSwipeDown={() => { onCancel() }}
+                onLongPress={() => { Vibration.vibrate(1) }}
                 menus={({ cancel, saveToLocal }) => (
                     <View style={{ flex: 1 }} >
                         <Pressable onPress={cancel} style={{ flex: 1 }} />
