@@ -7,7 +7,7 @@ import { useTheme } from "@rneui/themed";
 type Position = { x: number, y: number, z: number }
 
 
-export function MultipleObjectsModel(
+export function HandleModel(
   {
     camPosition,
     onSelectRestaurant,
