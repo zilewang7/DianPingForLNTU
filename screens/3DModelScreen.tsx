@@ -1,13 +1,13 @@
 import { ButtonGroup } from '@rneui/themed';
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { View, StyleSheet, Text } from 'react-native';
 import { ModalCard } from '../components/components/modalCard';
-import { MyDormitory } from '../components/threeJS/MyDormitory';
+import { CanteenModel } from '../components/threeJS/CanteenModel';
 
 
 function ModelScreen({ setTabSwitchAllowed }) {
-    const [selectedIndex, setSelectedIndex] = useState(0);
-    const [selectedIndexes, setSelectedIndexes] = useState([0, 1, 2]);
+    const [selectedCanteen, setSelectedCanteen] = useState(0);
+    const [selectedFloors, setSelectedFloors] = useState([0, 1, 2]);
     const [modalState, setModalState] = useState(false);
 
     const [selectedRestaurant, setSelectedRestaurant] = useState(null);
@@ -17,33 +17,33 @@ function ModelScreen({ setTabSwitchAllowed }) {
         setModalState(true);
     }
 
+    const FirstCanteenMolal = require('../assets/canteen/一食堂一楼.glb');
+    const SecondCanteenMolal = require('../assets/canteen/一食堂一楼.glb');
+
     return (
         <View style={styles.canteenScreen}>
             <ButtonGroup
                 buttons={['一食堂', '二食堂']}
-                selectedIndex={selectedIndex}
+                selectedIndex={selectedCanteen}
                 onPress={(value) => {
-                    setSelectedIndex(value);
+                    setSelectedCanteen(value);
                 }}
                 containerStyle={styles.CanteenButtonContainer}
                 buttonStyle={styles.buttonStyle}
             />
-            {
-                selectedIndex === 0
-                    ? (
-                        <MyDormitory onSelectRestaurant={onSelectRestaurant} setTabSwitchAllowed={setTabSwitchAllowed}/>
-                    )
-                    : (
-                        <MyDormitory onSelectRestaurant={onSelectRestaurant} setTabSwitchAllowed={setTabSwitchAllowed}/>
-                    )
-            }
+            <CanteenModel
+                onSelectRestaurant={onSelectRestaurant}
+                setTabSwitchAllowed={setTabSwitchAllowed}
+                modalFile={selectedCanteen === 0 ? FirstCanteenMolal : SecondCanteenMolal}
+                selectedFloors={selectedFloors}
+            />
             <ButtonGroup
                 buttons={['1楼', '1.5楼', '2楼']}
                 selectMultiple
-                selectedIndexes={selectedIndexes}
-                disabled={selectedIndex === 0 ? [1] : []}
+                selectedIndexes={selectedFloors}
+                disabled={selectedCanteen === 0 ? [1] : []}
                 onPress={(value) => {
-                    setSelectedIndexes(value);
+                    setSelectedFloors(value);
                 }}
                 containerStyle={styles.FloorButtonContainer}
                 buttonStyle={styles.buttonStyle}
