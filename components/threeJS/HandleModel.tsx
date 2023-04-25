@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 import { useFrame, useLoader } from "@react-three/fiber/native"
 import { useTheme } from "@rneui/themed";
+import { THREE } from "expo-three";
 
 type Position = { x: number, y: number, z: number }
 
@@ -13,6 +14,7 @@ export function HandleModel(
     onSelectRestaurant,
     selectedFloors,
     setTabSwitchAllowed,
+    smoothLookAt,
   }
     : {
       modalFile: any,
@@ -20,6 +22,7 @@ export function HandleModel(
       onSelectRestaurant: (name: string) => void,
       selectedFloors: number[],
       setTabSwitchAllowed: React.Dispatch<React.SetStateAction<boolean>>
+      smoothLookAt: (position: Position) => void,
     }) {
   const { theme } = useTheme();
 
@@ -27,7 +30,12 @@ export function HandleModel(
 
   const childrenRefs = useRef<any[]>([]); // 为每个子对象创建一个 ref 数组
   const [childrenState, setChildrenState] = useState(() =>
-    gltf.scene.children.map((child) => ({ name: child.name, isSelect: false }))
+    gltf.scene.children.map((child) => ({
+      name: child.name,
+      isSelect: false,
+      // position: { x: child.position.x / 10, y: child.position.y / 10, z: child.position.z / 10 }
+      position: new THREE.Vector3(child.position.x / 10, child.position.y / 10, child.position.z / 10)
+    }))
   );
 
   // 点击事件处理程序
@@ -40,6 +48,7 @@ export function HandleModel(
     newState.forEach((childState, i) => {
       if (i === index) {
         childState.isSelect = true;
+        smoothLookAt(childState.position);
       } else {
         childState.isSelect = false;
       }
