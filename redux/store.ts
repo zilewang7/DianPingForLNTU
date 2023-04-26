@@ -16,7 +16,7 @@ import rootReducer from "./reducers";
 const persistConfig = {
   key: "root",
   storage: AsyncStorage,
-  whitelist: ["user"], // 需要持久化的 reducer
+  whitelist: ["user", "theme"], // 需要持久化的 reducer
 };
 
 // 创建持久化的 reducer

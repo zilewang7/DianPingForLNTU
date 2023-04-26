@@ -1,8 +1,9 @@
+import { useTheme } from '@rneui/themed';
 import React from 'react';
 import { StyleSheet, View, Modal, KeyboardAvoidingView, Platform, TouchableWithoutFeedback } from 'react-native';
 
 export const ModalCard = ({ children, touchOutOfCard, ...props }) => {
-
+    const { theme } = useTheme();
 
     return (
         <Modal {...props}>
@@ -11,7 +12,7 @@ export const ModalCard = ({ children, touchOutOfCard, ...props }) => {
                     behavior={Platform.OS == "ios" ? "padding" : "height"}
                     style={styles.centeredView}>
                     <TouchableWithoutFeedback>
-                        <View style={styles.modalView}>
+                        <View style={{...styles.modalView, backgroundColor: theme.colors.background }}>
                             {children}
                         </View>
                     </TouchableWithoutFeedback>

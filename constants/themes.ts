@@ -2,13 +2,13 @@ import { Colors, lightColors, darkColors } from "@rneui/themed";
 
 type Mode = "light" | "dark";
 
-interface Theme {
+export interface Theme {
   lightColors: Colors;
   darkColors: Colors;
   mode: Mode;
 }
 
-const defaultTheme: Theme = {
+export const defaultTheme: Theme = {
   lightColors: lightColors,
   darkColors: { ...darkColors, background: "#333333" },
   mode: "light",
