@@ -16,10 +16,6 @@ export function CanteenModel({ onSelectRestaurant, setTabSwitchAllowed, modalFil
         require('../../assets/texture.jpg'),
     );
 
-    const smoothLookAt = (position) => {
-        setTarget(position);
-    }
-
     return (
         <View {...events} style={{ flex: 1 }}>
             <Canvas>
@@ -37,7 +33,7 @@ export function CanteenModel({ onSelectRestaurant, setTabSwitchAllowed, modalFil
                     onSelectRestaurant={onSelectRestaurant}
                     setTabSwitchAllowed={setTabSwitchAllowed}
                     selectedFloors={selectedFloors}
-                    smoothLookAt={smoothLookAt}
+                    setTarget={setTarget}
                 />
             </Canvas>
         </View>

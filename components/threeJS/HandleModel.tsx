@@ -14,7 +14,7 @@ export function HandleModel(
     onSelectRestaurant,
     selectedFloors,
     setTabSwitchAllowed,
-    smoothLookAt,
+    setTarget,
   }
     : {
       modalFile: any,
@@ -22,7 +22,7 @@ export function HandleModel(
       onSelectRestaurant: (name: string) => void,
       selectedFloors: number[],
       setTabSwitchAllowed: React.Dispatch<React.SetStateAction<boolean>>
-      smoothLookAt: (position: Position) => void,
+      setTarget: React.Dispatch<any>,
     }) {
   const { theme } = useTheme();
 
@@ -33,10 +33,10 @@ export function HandleModel(
     gltf.scene.children.map((child) => ({
       name: child.name,
       isSelect: false,
-      // position: { x: child.position.x / 10, y: child.position.y / 10, z: child.position.z / 10 }
-      position: new THREE.Vector3(child.position.x / 10, child.position.y / 10, child.position.z / 10)
+      position: { x: child.position.x / 10, y: child.position.y / 10, z: child.position.z / 10 }
     }))
   );
+  const [newTarget, setNewTarget] = useState({ x: 0, y: 0, z: 0 });
 
   // 点击事件处理程序
   const handleItemClick = (index, e) => {
@@ -48,7 +48,7 @@ export function HandleModel(
     newState.forEach((childState, i) => {
       if (i === index) {
         childState.isSelect = true;
-        smoothLookAt(childState.position);
+        setNewTarget(childState.position);
       } else {
         childState.isSelect = false;
       }
@@ -61,7 +61,7 @@ export function HandleModel(
     onSelectRestaurant(newState[index].name);
   }
 
-  useFrame((_state, _delta) => {
+  useFrame((_state, delta) => {
     childrenRefs.current.forEach((childRef) => {
       // 使用 lookAt 方法将文字底部朝向摄像机
       childRef?.current?.lookAt(camPosition.x, camPosition.y, camPosition.z);
@@ -69,6 +69,30 @@ export function HandleModel(
       // 将文字对象绕X轴旋转90度，使其朝向摄像机的方向
       childRef?.current?.rotateX(Math.PI / 2);
     });
+
+    // 调整视角到选中餐馆
+    setTarget((target) => {
+      if (target.x !== newTarget.x
+        || target.y !== newTarget.y
+        || target.z !== newTarget.z) {
+        const x = newTarget.x - target.x;
+        const y = newTarget.y - target.y;
+        const z = newTarget.z - target.z;
+        
+        
+        if (Math.abs(x) > 0.01 || Math.abs(y) > 0.01 || Math.abs(z) > 0.01) {
+        return new THREE.Vector3(
+          target.x + x * delta * 2,
+          target.y + y * delta * 2,
+          target.z + z * delta * 2,
+        )
+        } else {
+          return new THREE.Vector3(newTarget.x, newTarget.y, newTarget.z);
+        }
+      }
+
+      return target;
+    })
   });
 
   useEffect(() => {
