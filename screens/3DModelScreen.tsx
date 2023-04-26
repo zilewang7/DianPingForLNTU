@@ -7,8 +7,17 @@ import { CanteenModel } from '../components/threeJS/CanteenModel';
 
 function ModelScreen({ setTabSwitchAllowed }) {
     const [selectedCanteen, setSelectedCanteen] = useState(0);
-    const [selectedFloors, setSelectedFloors] = useState([0, 1, 2]);
+    const [selectedFloorsIndex, setSelectedFloors] = useState([0, 1, 2]);
     const [modalState, setModalState] = useState(false);
+    const [reloadModel, setReload] = useState(false);
+
+    const [onSelect, setOnSelect] = useState(false);
+
+    const selectedFloors = selectedFloorsIndex.map((index) => {
+        if (index === 0) return '1'
+        if (index === 1) return '1.5'
+        if (index === 2) return '2'
+    })
 
     const [selectedRestaurant, setSelectedRestaurant] = useState(null);
 
@@ -17,7 +26,7 @@ function ModelScreen({ setTabSwitchAllowed }) {
         setModalState(true);
     }
 
-    const FirstCanteenMolal = require('../assets/canteen/一食堂一楼.glb');
+    const FirstCanteenMolal = require('../assets/canteen/一食堂.glb');
     const SecondCanteenMolal = require('../assets/canteen/一食堂一楼.glb');
 
     return (
@@ -27,6 +36,13 @@ function ModelScreen({ setTabSwitchAllowed }) {
                 selectedIndex={selectedCanteen}
                 onPress={(value) => {
                     setSelectedCanteen(value);
+                    setSelectedFloors([0, 1, 2]);
+                    setSelectedRestaurant(null);
+                    setOnSelect(false)
+                    setReload(true);
+                    setTimeout(() => {
+                        setReload(false)
+                    });
                 }}
                 containerStyle={styles.CanteenButtonContainer}
                 buttonStyle={styles.buttonStyle}
@@ -36,11 +52,14 @@ function ModelScreen({ setTabSwitchAllowed }) {
                 setTabSwitchAllowed={setTabSwitchAllowed}
                 modalFile={selectedCanteen === 0 ? FirstCanteenMolal : SecondCanteenMolal}
                 selectedFloors={selectedFloors}
+                reloadModel={reloadModel}
+                onSelect={onSelect}
+                setOnSelect={setOnSelect}
             />
             <ButtonGroup
                 buttons={['1楼', '1.5楼', '2楼']}
                 selectMultiple
-                selectedIndexes={selectedFloors}
+                selectedIndexes={selectedFloorsIndex}
                 disabled={selectedCanteen === 0 ? [1] : []}
                 onPress={(value) => {
                     setSelectedFloors(value);
@@ -52,7 +71,8 @@ function ModelScreen({ setTabSwitchAllowed }) {
                 visible={modalState}
                 animationType="slide"
                 onRequestClose={setModalState.bind(this, false)}
-                transparent={true} touchOutOfCard={setModalState.bind(this, false)}
+                transparent={true}
+                touchOutOfCard={setModalState.bind(this, false)}
             >
                 <Text>{selectedRestaurant}</Text>
             </ModalCard>

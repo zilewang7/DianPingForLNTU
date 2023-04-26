@@ -7,7 +7,7 @@ import { HandleModel } from "./HandleModel";
 
 
 
-export function CanteenModel({ onSelectRestaurant, setTabSwitchAllowed, modalFile, selectedFloors }) {
+export function CanteenModel({ onSelectRestaurant, setTabSwitchAllowed, modalFile, selectedFloors, reloadModel, onSelect, setOnSelect }) {
     const [OrbitControls, events] = useControls()
     const [camPosition, setCamPosition] = useState({ x: 0, y: 0, z: 5 });
     const [target, setTarget] = useState(new THREE.Vector3());
@@ -24,17 +24,22 @@ export function CanteenModel({ onSelectRestaurant, setTabSwitchAllowed, modalFil
                         setCamPosition(event.target.camera.position);
                     }}
                     target={target}
+                    maxDistance={onSelect ? 2.5 : 10}
                 />
                 <ambientLight intensity={0.7} />
                 <pointLight position={[-10, 10, 5]} />
-                <HandleModel
-                    modalFile={modalFile}
-                    camPosition={camPosition}
-                    onSelectRestaurant={onSelectRestaurant}
-                    setTabSwitchAllowed={setTabSwitchAllowed}
-                    selectedFloors={selectedFloors}
-                    setTarget={setTarget}
-                />
+                {
+                    reloadModel ||
+                    <HandleModel
+                        modalFile={modalFile}
+                        camPosition={camPosition}
+                        onSelectRestaurant={onSelectRestaurant}
+                        setTabSwitchAllowed={setTabSwitchAllowed}
+                        selectedFloors={selectedFloors}
+                        setTarget={setTarget}
+                        setOnSelect={setOnSelect}
+                    />
+                }
             </Canvas>
         </View>
     )

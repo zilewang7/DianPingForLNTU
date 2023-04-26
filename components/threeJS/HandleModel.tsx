@@ -15,14 +15,16 @@ export function HandleModel(
     selectedFloors,
     setTabSwitchAllowed,
     setTarget,
+    setOnSelect,
   }
     : {
       modalFile: any,
       camPosition: Position,
       onSelectRestaurant: (name: string) => void,
-      selectedFloors: number[],
+      selectedFloors: ("1" | "1.5" | "2")[],
       setTabSwitchAllowed: React.Dispatch<React.SetStateAction<boolean>>
       setTarget: React.Dispatch<any>,
+      setOnSelect: React.Dispatch<React.SetStateAction<boolean>>,
     }) {
   const { theme } = useTheme();
 
@@ -49,6 +51,7 @@ export function HandleModel(
       if (i === index) {
         childState.isSelect = true;
         setNewTarget(childState.position);
+        setOnSelect(true);
       } else {
         childState.isSelect = false;
       }
@@ -78,14 +81,22 @@ export function HandleModel(
         const x = newTarget.x - target.x;
         const y = newTarget.y - target.y;
         const z = newTarget.z - target.z;
-        
-        
-        if (Math.abs(x) > 0.01 || Math.abs(y) > 0.01 || Math.abs(z) > 0.01) {
-        return new THREE.Vector3(
-          target.x + x * delta * 2,
-          target.y + y * delta * 2,
-          target.z + z * delta * 2,
-        )
+
+        const absX = Math.abs(x);
+        const absY = Math.abs(y);
+        const absZ = Math.abs(z);
+
+        if (absX > 0.001 || absY > 0.001 || absZ > 0.001) {
+          if (absX < 0.05 && absY < 0.05 && absZ < 0.05) {
+            setTimeout(() => {
+              setOnSelect(false)
+            })
+          }
+          return new THREE.Vector3(
+            target.x + x * delta * 2,
+            target.y + y * delta * 2,
+            target.z + z * delta * 2,
+          )
         } else {
           return new THREE.Vector3(newTarget.x, newTarget.y, newTarget.z);
         }
@@ -111,7 +122,7 @@ export function HandleModel(
         childrenRefs.current[index] = childRef; // 将 ref 存入 ref 数组中
 
         const place = child.name.split('-');
-        if (selectedFloors.includes(+place[1] - 1)) { // 只展示选中楼层
+        if (selectedFloors.includes(place[1])) { // 只展示选中楼层
           return (
             <mesh
               key={child.uuid}
