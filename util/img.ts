@@ -2,10 +2,11 @@ import * as ImagePicker from "expo-image-picker";
 import * as MediaLibrary from "expo-media-library";
 import * as FileSystem from "expo-file-system";
 import { SaveFormat, manipulateAsync } from "expo-image-manipulator";
-import { getAPI, postAPI } from "./http";
 import { Alert } from "react-native";
+import { ImgOssHost } from "./http";
 import { getUserToken } from "./user";
 import { store } from "../redux/store";
+import { getUploadSign, updateAvatarUrl, uploadImage } from "../api/img.api";
 
 const compressImg = async (uri: string, maxSize = 1000) => {
   let preSize: number = Infinity;
@@ -102,7 +103,7 @@ export const uploadImg = async (uri, type = "unclassified") => {
   const token = await getUserToken();
   if (!token) return;
 
-  const sign = await postAPI("/oos/uploadSgin", { token });
+  const sign = await getUploadSign(token);
 
   if (sign.ok) {
     const { policy, OSSAccessKeyId, signature, userId } = sign.json;
@@ -125,15 +126,16 @@ export const uploadImg = async (uri, type = "unclassified") => {
     } as unknown as Blob);
 
     try {
-      const response = await fetch("http://img.heimao.icu", {
-        method: "POST",
-        body: formData,
-      });
+      const response = await uploadImage(formData);
 
       if (response.ok) {
-        const avatarUrl = `http://img.heimao.icu/${key}`;
-        await postAPI("/user/update", { token, update: { avatarUrl } });
-        return avatarUrl;
+        const imgUrl = `http://${ImgOssHost}/${key}`;
+
+        if (type === "Avatar") {
+          await updateAvatarUrl(token, imgUrl);
+        }
+
+        return imgUrl;
       }
     } catch {
       Alert.alert("上传失败");

@@ -1,11 +1,13 @@
 import { navigate } from "../navigation/RootNavigation";
 import { clearUserAuth } from "./user";
 
-const host = "10.0.0.136:3000"; // PC
-// const host = "10.0.0.172:3000"; // Desktop
+// const host = "10.0.0.136:3000"; // PC
+const host = "10.0.0.172:3000"; // Desktop
+
+export const ImgOssHost = "img.heimao.icu";
 
 const handleResponse = async (response: Response) => {
-  const res: any = {
+  const res: { ok: boolean; json: any } = {
     ok: response.ok,
     json: {},
   };
@@ -33,37 +35,18 @@ export async function postAPI(router: string, params = {}) {
     body: JSON.stringify(params),
   });
 
-  const res: any = {
-    ok: response.ok,
-    json: {},
-  };
+  return await handleResponse(response);
+}
 
-  if (response.ok) {
-    try {
-      res.json = await response.json();
-    } catch (e) {
-      console.warn(e);
-    }
-  }
-
-  return res;
+export async function formPost(formData: FormData) {
+  return await fetch(`http://${ImgOssHost}`, {
+    method: "POST",
+    body: formData,
+  });
 }
 
 export async function getAPI(router: string) {
   const response = await fetch(`http://${host}${router}`, { method: "GET" });
 
-  const res: any = {
-    ok: response.ok,
-    json: {},
-  };
-
-  if (response.ok) {
-    try {
-      res.json = await response.json();
-    } catch (e) {
-      console.warn(e);
-    }
-  }
-
-  return res;
+  return await handleResponse(response);
 }
