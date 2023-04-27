@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { View, Text, StyleSheet } from 'react-native';
 import { BottomSheet, Button, Icon, ListItem, useTheme } from '@rneui/themed';
+import { hexToRgba } from '../util/color';
 
 const FilterList = [
     {
@@ -31,6 +32,7 @@ const FilterList = [
 export function BusinessList() {
     const { theme } = useTheme();
 
+    const [filer, setFiler] = useState(FilterList.map((v) => v.option));
     const [filterSelectIndex, setFilterSelectIndex] = useState<number | null>(null);
 
     return (
@@ -42,6 +44,7 @@ export function BusinessList() {
                         index={index}
                         title={filter.title}
                         option={filter.option}
+                        filter={filer[index]}
                         isVisible={filterSelectIndex === index}
                         select={setFilterSelectIndex}
                         close={() => setTimeout(setFilterSelectIndex.bind(this, null), 150)}
@@ -53,31 +56,98 @@ export function BusinessList() {
     )
 }
 
-const Filer = ({ index, title, option, isVisible, select, close, theme }) => {
+const Filer = ({ index, title, option, filter, isVisible, select, close, theme }) => {
+    const [selectList, setSelectList] = useState<string[]>(filter);
+
+    const isAllSelect = selectList.length === option.length;
+
+    const cancel = () => {
+        setSelectList(filter);
+        close();
+    }
 
 
     return <>
         <Text
             onPress={select.bind(this, index)}
-            style={isVisible ? { color: theme.colors.primary } : undefined}
+            style={(isVisible || !isAllSelect) ? { color: theme.colors.primary } : undefined}
         >
             <Icon
-                name={"edit"}
+                name="filter"
                 type="antdesign" size={12}
-                color={isVisible ? theme.colors.primary : '#555555'}
+                color={(isVisible || !isAllSelect) ? theme.colors.primary : '#555555'}
             /> {title}
         </Text>
         {
             isVisible &&
             <BottomSheet
                 modalProps={{
-                    onRequestClose: close,
+                    onRequestClose: cancel,
                 }}
                 isVisible={isVisible}
-                onBackdropPress={close}
+                onBackdropPress={cancel}
             >
                 <ListItem>
-                    <Text>{JSON.stringify(option)}</Text><Text>{JSON.stringify(option)}</Text>
+                    <View>
+                        <Button
+                            title={'全选'}
+                            containerStyle={styles.filterButtonContainer}
+                            buttonStyle={
+                                isAllSelect ?
+                                    {
+                                        ...styles.filterButton,
+                                        backgroundColor: hexToRgba(theme.colors.primary, '0.3'),
+                                        borderColor: theme.colors.primary,
+                                    } :
+                                    styles.filterButton
+                            }
+                            titleStyle={{ color: isAllSelect ? theme.colors.primary : 'black' }}
+                            onPress={() => {
+                                if (isAllSelect) {
+                                    setSelectList([]);
+                                } else {
+                                    setSelectList(option);
+                                }
+                            }}
+                        />
+                        <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
+                            {
+                                option.map((name, index) => {
+                                    const isSelected = selectList.includes(name);
+                                    return <Button
+                                        key={index}
+                                        size='sm'
+                                        title={name}
+                                        containerStyle={styles.filterButtonContainer}
+                                        buttonStyle={
+                                            isSelected ?
+                                                {
+                                                    ...styles.filterButton,
+                                                    backgroundColor: hexToRgba(theme.colors.primary, '0.3'),
+                                                    borderColor: theme.colors.primary,
+                                                } :
+                                                styles.filterButton
+                                        }
+                                        titleStyle={
+                                            isSelected ?
+                                                {
+                                                    ...styles.filterButtonTitle,
+                                                    color: theme.colors.primary,
+                                                } :
+                                                styles.filterButtonTitle
+                                        }
+                                        onPress={() => {
+                                            if (isSelected) {
+                                                setSelectList(selectList.filter(val => val !== name))
+                                            } else {
+                                                setSelectList(list => [...list, name])
+                                            }
+                                        }}
+                                    />
+                                })
+                            }
+                        </View>
+                    </View>
                 </ListItem>
                 <View style={{ flexDirection: 'row', }}>
                     <Button
@@ -90,10 +160,10 @@ const Filer = ({ index, title, option, isVisible, select, close, theme }) => {
                         }}
                         titleStyle={{ marginHorizontal: 20, color: 'black' }}
                         size='lg'
-                        onPress={close}
+                        onPress={cancel}
                     />
                     <Button
-                        title="Light"
+                        title="确定"
                         containerStyle={{
                             flex: 1
                         }}
@@ -112,5 +182,18 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-around',
         paddingVertical: 6,
+    },
+    filterButtonContainer: {
+        margin: 10,
+    },
+    filterButton: {
+        backgroundColor: 'rgba(244, 244, 244, 1)',
+        borderRadius: 6,
+        borderWidth: 1,
+        borderColor: '#aaaaaa'
+    },
+    filterButtonTitle: {
+        color: '#555555',
+        fontSize: 14,
     }
 })
