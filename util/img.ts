@@ -4,7 +4,6 @@ import * as FileSystem from "expo-file-system";
 import { SaveFormat, manipulateAsync } from "expo-image-manipulator";
 import { Alert } from "react-native";
 import { ImgOssHost } from "./http";
-import { getUserToken } from "./user";
 import { store } from "../redux/store";
 import { getUploadSign, updateAvatarUrl, uploadImage } from "../api/img.api";
 
@@ -100,10 +99,7 @@ export const saveImg = async (imageUri) => {
 };
 
 export const uploadImg = async (uri, type = "unclassified") => {
-  const token = await getUserToken();
-  if (!token) return;
-
-  const sign = await getUploadSign(token);
+  const sign = await getUploadSign();
 
   if (sign.ok) {
     const { policy, OSSAccessKeyId, signature, userId } = sign.json;
@@ -132,7 +128,7 @@ export const uploadImg = async (uri, type = "unclassified") => {
         const imgUrl = `http://${ImgOssHost}/${key}`;
 
         if (type === "Avatar") {
-          await updateAvatarUrl(token, imgUrl);
+          await updateAvatarUrl(imgUrl);
         }
 
         return imgUrl;
