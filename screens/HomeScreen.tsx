@@ -5,12 +5,14 @@ import { BusinessList } from '../components/BusinessList';
 
 function HomeScreen() {
     return (
-        <ScrollView>
+        <View style={{ flex: 1 }}>
             <View style={styles.mainInnerContainer}>
                 <Text>PlaceHolder</Text>
             </View>
-            <BusinessList />
-        </ScrollView>
+            <View style={{ flex: 1 }}>
+                <BusinessList />
+            </View>
+        </View>
     )
 };
 

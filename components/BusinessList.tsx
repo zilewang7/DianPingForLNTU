@@ -1,7 +1,9 @@
-import React, { useState } from 'react'
-import { View, StyleSheet } from 'react-native';
-import { BottomSheet, Button, Icon, Text, ListItem, useTheme } from '@rneui/themed';
+import React, { useEffect, useState } from 'react'
+import { View, StyleSheet, FlatList } from 'react-native';
+import { BottomSheet, Button, Icon, Text, ListItem, useTheme, Card } from '@rneui/themed';
 import { hexToRgba } from '../util/color';
+import { getBusinessList } from '../api/business.api';
+import { Image } from 'expo-image';
 
 const FilterList = [
     {
@@ -26,37 +28,85 @@ const FilterList = [
             '面包饮品',
             '其他',
         ],
-    }
+    },
 ];
 
 export function BusinessList() {
     const { theme } = useTheme();
 
-    const [filer, setFiler] = useState(FilterList.map((v) => v.option));
+    const [filter, setFilter] = useState(FilterList.map((v) => v.option));
     const [filterSelectIndex, setFilterSelectIndex] = useState<number | null>(null);
+    const [businessData, setBusinessData] = useState([]);
+
+    const onFilterChange = async (newFilter?, index?) => {
+        if (newFilter) {
+            setFilter((filter) => {
+                filter[index] = newFilter;
+                return filter;
+            })
+        }
+
+        const { json } = await getBusinessList(newFilter);
+        setBusinessData(json);
+    }
+
+    useEffect(() => { onFilterChange() }, [])
 
     return (
-        <View style={styles.filterContainer}>
-            {
-                FilterList.map((filter, index) => {
-                    return <Filer
-                        key={index}
-                        index={index}
-                        title={filter.title}
-                        option={filter.option}
-                        filter={filer[index]}
-                        isVisible={filterSelectIndex === index}
-                        select={setFilterSelectIndex}
-                        close={() => setTimeout(setFilterSelectIndex.bind(this, null), 150)}
-                        theme={theme}
-                    />
-                })
-            }
-        </View>
+        <>
+            <View style={styles.filterContainer}>
+                {FilterList.map((item, index) => {
+                    return (
+                        <Filter
+                            key={index}
+                            index={index}
+                            title={item.title}
+                            option={item.option}
+                            filter={filter[index]}
+                            isVisible={filterSelectIndex === index}
+                            select={setFilterSelectIndex}
+                            close={() => setTimeout(setFilterSelectIndex.bind(this, null), 100)}
+                            set={(newFilter: string[]) => {
+                                onFilterChange(newFilter, index);
+                            }}
+                            theme={theme}
+                        />
+                    )
+                })}
+            </View>
+            <FlatList
+                data={businessData}
+                contentContainerStyle={{ paddingBottom: 10 }}
+                columnWrapperStyle={{ flexDirection: 'row' }}
+                numColumns={2}
+                renderItem={({ item }) => {
+                    return (
+                        <Card containerStyle={{
+                            flex: 1,
+                            margin: 10,
+                            padding: 0,
+                        }}>
+                            <View style={{ width: '100%' }}>
+                                <Card.Image
+                                    // ImageComponent={Image}
+                                    style={{ height: (innerWidth / 4) * 3 }}
+                                    source={{
+                                        uri: item.pictureUrl,
+                                    }}
+                                />
+                            </View>
+
+                            <Card.Divider />
+                            <Card.Title>{item.name}</Card.Title>
+                        </Card>
+                    )
+                }}
+            />
+        </>
     )
 }
 
-const Filer = ({ index, title, option, filter, isVisible, select, close, theme }) => {
+const Filter = ({ index, title, option, filter, isVisible, select, close, set, theme }) => {
     const [selectList, setSelectList] = useState<string[]>(filter);
 
     const isAllSelect = selectList.length === option.length;
@@ -66,11 +116,18 @@ const Filer = ({ index, title, option, filter, isVisible, select, close, theme }
         close();
     }
 
+    const onSure = () => {
+        if (JSON.stringify(selectList.sort()) !== JSON.stringify(filter.sort())) {
+            set(selectList);
+        }
+        close();
+    }
+
 
     return <>
         <Text
             onPress={select.bind(this, index)}
-            style={(isVisible || !isAllSelect) ? { color: theme.colors.primary } : undefined}
+            style={(isVisible || !isAllSelect) ? { color: theme.colors.primary } : theme.colors.black}
         >
             <Icon
                 name="filter"
@@ -175,6 +232,7 @@ const Filer = ({ index, title, option, filter, isVisible, select, close, theme }
                         }}
                         titleStyle={{ marginHorizontal: 20, color: 'black' }}
                         size='lg'
+                        onPress={onSure}
                     />
                 </View>
             </BottomSheet>
@@ -188,6 +246,14 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-around',
         paddingVertical: 6,
+        shadowColor: 'black',  // ios
+        shadowOffset: { width: 0, height: 2 },
+        shadowRadius: 10,
+        shadowOpacity: 0.26,
+
+        elevation: 5, // android
+
+        zIndex: 100
     },
     filterButtonContainer: {
         margin: 10,
