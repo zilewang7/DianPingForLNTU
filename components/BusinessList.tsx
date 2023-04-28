@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
-import { View, Text, StyleSheet } from 'react-native';
-import { BottomSheet, Button, Icon, ListItem, useTheme } from '@rneui/themed';
+import { View, StyleSheet } from 'react-native';
+import { BottomSheet, Button, Icon, Text, ListItem, useTheme } from '@rneui/themed';
 import { hexToRgba } from '../util/color';
 
 const FilterList = [
@@ -154,9 +154,11 @@ const Filer = ({ index, title, option, filter, isVisible, select, close, theme }
                         title="取消"
                         buttonStyle={{
                             backgroundColor: 'rgba(244, 244, 244, 1)',
+                            borderRadius: 0,
                         }}
                         containerStyle={{
-                            flex: 1
+                            flex: 1,
+                            borderRadius: 0,
                         }}
                         titleStyle={{ marginHorizontal: 20, color: 'black' }}
                         size='lg'
@@ -164,8 +166,12 @@ const Filer = ({ index, title, option, filter, isVisible, select, close, theme }
                     />
                     <Button
                         title="确定"
+                        buttonStyle={{
+                            borderRadius: 0,
+                        }}
                         containerStyle={{
-                            flex: 1
+                            flex: 1,
+                            borderRadius: 0,
                         }}
                         titleStyle={{ marginHorizontal: 20, color: 'black' }}
                         size='lg'

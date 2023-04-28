@@ -1,6 +1,6 @@
-import { Avatar, Button, Divider } from '@rneui/themed';
+import { Avatar, Button, Divider, Text } from '@rneui/themed';
 import React, { useState } from 'react'
-import { View, Text, StyleSheet, Pressable } from 'react-native';
+import { View, StyleSheet, Pressable } from 'react-native';
 import { MyAvatar } from './components/avatar';
 import { pickImage, uploadImg } from '../util/img';
 import { MyImageViewer } from './components/imgVIewer';

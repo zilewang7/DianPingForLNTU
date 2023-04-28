@@ -3,10 +3,9 @@ import * as React from 'react';
 import {
     StyleSheet,
     View,
-    Text,
     Pressable,
 } from 'react-native';
-import { Icon } from '@rneui/themed';
+import { Icon, Text } from '@rneui/themed';
 import { useSelector } from '../redux/hook';
 import { clearUserAuth } from '../util/user';
 

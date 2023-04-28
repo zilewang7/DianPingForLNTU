@@ -3,7 +3,6 @@ import {
     Alert,
     StyleSheet,
     View,
-    Text,
     ImageBackground,
     Dimensions,
     LayoutAnimation,
@@ -12,7 +11,7 @@ import {
     ScrollView,
     Platform,
 } from 'react-native';
-import { Input, Button, Icon, InputProps } from '@rneui/themed';
+import { Input, Button, Icon, InputProps, Text } from '@rneui/themed';
 import { useHeaderHeight } from '@react-navigation/elements';
 import { createUser, userLogin } from '../api/user.api';
 import { setUserAuth } from '../util/user';

@@ -1,5 +1,4 @@
-import { Tab, TabView, ListItem, Badge, Text } from '@rneui/base';
-import { useTheme } from '@rneui/themed';
+import { Tab, TabView, ListItem, Badge, Text, useTheme } from '@rneui/themed';
 import React from 'react'
 import { Dimensions, View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';

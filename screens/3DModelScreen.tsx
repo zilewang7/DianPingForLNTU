@@ -1,6 +1,6 @@
-import { ButtonGroup } from '@rneui/themed';
+import { ButtonGroup, Text } from '@rneui/themed';
 import React, { useState } from 'react'
-import { View, StyleSheet, Text } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { ModalCard } from '../components/components/modalCard';
 import { CanteenModel } from '../components/threeJS/CanteenModel';
 
