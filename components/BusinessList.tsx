@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
-import { View, StyleSheet, FlatList } from 'react-native';
-import { BottomSheet, Button, Icon, Text, ListItem, useTheme, Card } from '@rneui/themed';
+import { View, StyleSheet, FlatList, ImageBackground } from 'react-native';
+import { BottomSheet, Button, Icon, Text, ListItem, useTheme } from '@rneui/themed';
 import { hexToRgba } from '../util/color';
 import { getBusinessList } from '../api/business.api';
 import { Image } from 'expo-image';
@@ -77,28 +77,38 @@ export function BusinessList() {
             <FlatList
                 data={businessData}
                 contentContainerStyle={{ paddingBottom: 10 }}
-                columnWrapperStyle={{ flexDirection: 'row' }}
-                numColumns={2}
-                renderItem={({ item }) => {
+                keyExtractor={item => item.address}
+                // columnWrapperStyle={{ flexDirection: 'row' }}
+                renderItem={({ item, index }) => {
+                    const place = item.address.split('-')
                     return (
-                        <Card containerStyle={{
-                            flex: 1,
-                            margin: 10,
-                            padding: 0,
-                        }}>
-                            <View style={{ width: '100%' }}>
-                                <Card.Image
-                                    // ImageComponent={Image}
-                                    style={{ height: (innerWidth / 4) * 3 }}
-                                    source={{
-                                        uri: item.pictureUrl,
-                                    }}
-                                />
+                        <View style={{ flexDirection: 'row', marginBottom: 10, marginHorizontal: 5 }}>
+                            <View style={{ width: '40%', height: innerWidth * 0.3 }}>
+                                <ImageBackground
+                                    source={require('../assets/Transparent_Akkarin_Transparentized.png')}
+                                >
+                                    <Image
+                                        style={{ width: '100%', height: '100%', borderRadius: 10 }}
+                                        source={item.pictureUrl + '?x-oss-process=image/resize,h_400,m_lfit'}
+                                    />
+                                </ImageBackground>
                             </View>
-
-                            <Card.Divider />
-                            <Card.Title>{item.name}</Card.Title>
-                        </Card>
+                            <View style={{ padding: 10, width: '60%' }}>
+                                <Text h4>{item.name}</Text>
+                                <Text
+                                    style={{
+                                        alignSelf: 'flex-start',
+                                        paddingHorizontal: 4,
+                                        borderRadius: 5,
+                                        backgroundColor: hexToRgba(theme.colors.primary, '0.15'),
+                                        color: theme.colors.primary,
+                                    }}
+                                >
+                                    {`${place[0]} 食堂 ${place[1]} 楼`}
+                                </Text>
+                                <Text style={{ color: hexToRgba(theme.colors.secondary, '0.7'), alignSelf: 'flex-end' }}>{item.type}</Text>
+                            </View>
+                        </View>
                     )
                 }}
             />
