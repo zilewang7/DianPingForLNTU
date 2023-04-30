@@ -2,6 +2,7 @@ import { useState } from "react";
 import { View, StyleSheet } from "react-native";
 import { Icon, BottomSheet, ListItem, Text, Button } from "@rneui/themed"
 import { hexToRgba } from "../../util/color";
+import { clone } from 'lodash';
 
 export const Filter = ({ index, title, option, filter, isVisible, select, close, set, theme }) => {
     const [selectList, setSelectList] = useState<string[]>(filter);
@@ -14,7 +15,7 @@ export const Filter = ({ index, title, option, filter, isVisible, select, close,
     }
 
     const onSure = () => {
-        if (JSON.stringify(selectList.sort()) !== JSON.stringify(filter.sort())) {
+        if (JSON.stringify(clone(selectList).sort()) !== JSON.stringify(clone(filter).sort())) {
             set(selectList);
         }
         close();
@@ -42,7 +43,7 @@ export const Filter = ({ index, title, option, filter, isVisible, select, close,
                 onBackdropPress={cancel}
             >
                 <ListItem>
-                    <View>
+                    <View style={{ width: '100%' }}>
                         <Button
                             title={'全选'}
                             containerStyle={styles.filterButtonContainer}

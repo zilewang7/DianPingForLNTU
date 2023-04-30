@@ -73,6 +73,12 @@ dependencies:
   expo-three:
     specifier: ^7.0.0
     version: 7.0.0(expo-asset@8.9.1)(expo-file-system@15.2.2)(expo-font@11.1.1)(expo-modules-core@1.2.6)(react-native@0.71.6)(react@18.2.0)(three@0.151.3)
+  immer:
+    specifier: ^10.0.1
+    version: 10.0.1
+  lodash:
+    specifier: ^4.17.21
+    version: 4.17.21
   r3f-native-orbitcontrols:
     specifier: ^1.0.5
     version: 1.0.5(@react-three/fiber@8.12.0)(react-native@0.71.6)(react@18.2.0)(three@0.151.3)
@@ -4800,6 +4806,10 @@ packages:
     resolution: {integrity: sha512-47xSUiQioGaB96nqtp5/q55m0aBQSQdyIloMOc/x+QVTDZLNmXE892IIDrJ0hM1A5vcNUDD5tDffkSP5lCaIIA==}
     engines: {node: '>=4.0'}
     hasBin: true
+    dev: false
+
+  /immer@10.0.1:
+    resolution: {integrity: sha512-zg++jJLsKKTwXGeSYIw0HgChSYQGtu0UDTnbKx5aGLYgte4CwTmH9eJDYyQ6FheyUtBe+lQW9FrGxya1G+Dtmg==}
     dev: false
 
   /immer@9.0.21:

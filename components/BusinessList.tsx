@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react'
-import StarRating from 'react-native-star-rating-widget';
-import { View, StyleSheet, FlatList, ImageBackground, RefreshControl } from 'react-native';
+import { StarRatingDisplay } from 'react-native-star-rating-widget';
+import { View, StyleSheet, FlatList, ImageBackground, RefreshControl, Pressable } from 'react-native';
 import { Text, useTheme } from '@rneui/themed';
 import { Image } from 'expo-image';
+import { ScreenWidth } from '@rneui/base';
 import { Filter } from './components/filter';
 import { hexToRgba } from '../util/color';
 import { getBusinessList } from '../api/business.api';
@@ -26,13 +27,14 @@ export function BusinessList() {
             })
         }
 
-        const { json } = await getBusinessList(newFilter);
+        const { json } = await getBusinessList(filter);
         setBusinessData(json);
         setIsRefresh(false)
     }
 
     useEffect(() => { onFilterChange() }, [])
 
+    let columnNum = ScreenWidth < 600 ? 1 : 2;
     return (
         <>
             <View style={styles.filterContainer}>
@@ -57,7 +59,7 @@ export function BusinessList() {
             </View>
             <FlatList
                 data={businessData}
-                contentContainerStyle={{ paddingBottom: 10, }}
+                // contentContainerStyle={{ paddingBottom: 10, }}
                 keyExtractor={item => item.address}
                 // columnWrapperStyle={{ flexDirection: 'row' }}
                 showsVerticalScrollIndicator={false}
@@ -71,11 +73,20 @@ export function BusinessList() {
                         }}
                     />
                 }
-                renderItem={({ item, index }) => {
+                numColumns={columnNum}
+                renderItem={({ item }) => {
                     const place = item.address.split('-')
                     return (
-                        <View style={{ flexDirection: 'row', marginBottom: 10, marginHorizontal: 5 }}>
-                            <View style={{ width: '40%', height: innerWidth * 0.3 }}>
+                        <Pressable
+                            onPress={() => console.log(item.address)}
+                            style={{
+                                flexDirection: 'row',
+                                marginBottom: 10,
+                                marginHorizontal: 5,
+                                width: ScreenWidth / columnNum - 10
+                            }}
+                        >
+                            <View style={{ width: '40%', height: (ScreenWidth / columnNum) * 0.3 }}>
                                 <ImageBackground
                                     source={require('../assets/Transparent_Akkarin_Transparentized.png')}
                                 >
@@ -85,7 +96,7 @@ export function BusinessList() {
                                     />
                                 </ImageBackground>
                             </View>
-                            <View style={{ padding: 10, width: '60%' }}>
+                            <View style={{ padding: 10, width: '60%', justifyContent: 'space-between' }}>
                                 <Text h4>{item.name}</Text>
                                 <Text
                                     style={{
@@ -94,20 +105,22 @@ export function BusinessList() {
                                         borderRadius: 5,
                                         backgroundColor: hexToRgba(theme.colors.primary, '0.15'),
                                         color: theme.colors.primary,
+                                        overflow: 'hidden',
                                     }}
                                 >
                                     {`${place[0]} 食堂 ${place[1]} 楼`}
                                 </Text>
-                                <StarRating
+                                <StarRatingDisplay
                                     rating={4.5}
-                                    onChange={() => { }}
                                     starSize={15}
+                                    starStyle={{ marginHorizontal: 0 }}
                                 />
                                 <Text style={{ color: hexToRgba(theme.colors.secondary, '0.7'), alignSelf: 'flex-end' }}>{item.type}</Text>
                             </View>
-                        </View>
+                        </Pressable>
                     )
                 }}
+                ListFooterComponent={<Text style={{ textAlign: 'center', marginVertical: 20 }} h4>你到达了没有店的荒原</Text>}
             />
         </>
     )
@@ -119,6 +132,5 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-around',
         paddingVertical: 6,
-
     },
 })
