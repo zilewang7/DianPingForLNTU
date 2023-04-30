@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import StarRating from 'react-native-star-rating-widget';
 import { View, StyleSheet, FlatList, ImageBackground, RefreshControl } from 'react-native';
 import { Text, useTheme } from '@rneui/themed';
 import { Image } from 'expo-image';
@@ -97,6 +98,11 @@ export function BusinessList() {
                                 >
                                     {`${place[0]} 食堂 ${place[1]} 楼`}
                                 </Text>
+                                <StarRating
+                                    rating={4.5}
+                                    onChange={() => { }}
+                                    starSize={15}
+                                />
                                 <Text style={{ color: hexToRgba(theme.colors.secondary, '0.7'), alignSelf: 'flex-end' }}>{item.type}</Text>
                             </View>
                         </View>

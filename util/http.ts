@@ -11,7 +11,13 @@ const myFetch = async (currentHost: string, params) => {
     currentHost.indexOf(host) >= 0 &&
     params?.headers?.["Content-Type"] === "application/json;charset=utf-8"
   ) {
-    const token = await getUserToken();
+    let token;
+    try {
+      token = await getUserToken();
+    } catch (e) {
+      console.warn(e);
+    }
+
     return await fetch(currentHost, {
       ...params,
       body: JSON.stringify({
