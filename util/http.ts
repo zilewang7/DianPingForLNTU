@@ -44,7 +44,7 @@ const handleResponse = async (response: Response) => {
     }
   } else if (response.status === 401) {
     clearUserAuth();
-    navigate("登录/注册", { screen: "登录/注册" });
+    navigate("登录/注册");
   }
 
   return res;

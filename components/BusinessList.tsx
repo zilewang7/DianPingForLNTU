@@ -9,6 +9,7 @@ import { Filter } from './components/filter';
 import { hexToRgba } from '../util/color';
 import { getBusinessList } from '../api/business.api';
 import { BusinessFilterList } from '../constants/business';
+import { navigate } from '../navigation/RootNavigation';
 
 
 export function BusinessList() {
@@ -89,7 +90,7 @@ export function BusinessList() {
                     const place = item.address.split('-')
                     return (
                         <Pressable
-                            onPress={() => console.log(item.address)}
+                            onPress={() => { navigate("商家", { business: item }); }}
                             style={{
                                 flexDirection: 'row',
                                 marginBottom: 10,
