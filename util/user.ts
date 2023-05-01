@@ -1,7 +1,6 @@
 import { deleteItemAsync, getItemAsync, setItemAsync } from "expo-secure-store";
 import { store } from "../redux/store";
 import { setUser, clearUser } from "../redux/slices/userSlice";
-import { navigate } from "../navigation/RootNavigation";
 
 export const setUserAuth = (json) => {
   setItemAsync("jwtToken", json.token);
@@ -21,6 +20,5 @@ export const getUserToken = async () => {
     return token;
   } else {
     clearUserAuth();
-    navigate("登录/注册", { screen: "登录/注册" });
   }
 };
