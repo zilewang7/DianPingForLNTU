@@ -88,9 +88,10 @@ export function BusinessList() {
                 }}
                 renderItem={({ item }) => {
                     const place = item.address.split('-')
+                    const placeText = `${place[0]} 食堂 ${place[1]} 楼`
                     return (
                         <Pressable
-                            onPress={() => { navigate("商家", { business: item }); }}
+                            onPress={() => { navigate("商家", { business: item, placeText }); }}
                             style={{
                                 flexDirection: 'row',
                                 marginBottom: 10,
@@ -120,7 +121,7 @@ export function BusinessList() {
                                         overflow: 'hidden',
                                     }}
                                 >
-                                    {`${place[0]} 食堂 ${place[1]} 楼`}
+                                    {placeText}
                                 </Text>
                                 <StarRatingDisplay
                                     rating={4.5}

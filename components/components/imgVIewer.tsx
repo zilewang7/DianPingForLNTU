@@ -3,6 +3,7 @@ import ImageViewer from 'react-native-image-zoom-viewer';
 import { ListItem } from '@rneui/base';
 import { Modal, View, Pressable, Vibration } from 'react-native';
 import { saveImg } from '../../util/img';
+import { Image } from 'expo-image';
 
 
 export function MyImageViewer({ visible, onCancel, images, index = 0 }) {
@@ -32,6 +33,7 @@ export function MyImageViewer({ visible, onCancel, images, index = 0 }) {
                 enableSwipeDown={true}
                 onSwipeDown={() => { onCancel() }}
                 onLongPress={() => { Vibration.vibrate(1) }}
+                renderImage={({ ...props }) => <Image {...props} />}
                 menus={({ cancel, saveToLocal }) => (
                     <View style={{ flex: 1 }} >
                         <Pressable onPress={cancel} style={{ flex: 1 }} />

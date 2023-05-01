@@ -15,5 +15,6 @@ export const ModalNavigation = [
         key={2}
         name="商家"
         component={BusinessScreen}
+        options={{ headerTransparent: true }}
     />,
 ];
