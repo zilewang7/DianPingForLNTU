@@ -11,7 +11,7 @@ export function MyAvatar({ avatarUrl, children, onAvatarPress }) {
         <Avatar
             size={64}
             rounded
-            source={{ uri: avatarUrl + '?x-oss-process=image/resize,h_200,m_lfit' }}
+            source={{ uri: avatarUrl ? avatarUrl + '?x-oss-process=image/resize,h_200,m_lfit' : undefined }}
             renderPlaceholderContent={<Image source={require('../../assets/Transparent_Akkarin_Transparentized.png')} style={styles.defaultAvatar} />}
             ImageComponent={Image}
             onPress={onAvatarPress}

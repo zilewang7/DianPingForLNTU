@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, Pressable } from "react-native";
 import { Icon, BottomSheet, ListItem, Text, Button } from "@rneui/themed"
 import { hexToRgba } from "../../util/color";
 import { clone } from 'lodash';
@@ -23,16 +23,19 @@ export const Filter = ({ index, title, option, filter, isVisible, select, close,
 
 
     return <>
-        <Text
+        <Pressable
             onPress={select.bind(this, index)}
-            style={(isVisible || !isAllSelect) ? { color: theme.colors.primary } : theme.colors.black}
+            style={{ flexDirection: 'row', alignItems: 'center' }}
         >
             <Icon
                 name="filter"
                 type="antdesign" size={12}
                 color={(isVisible || !isAllSelect) ? theme.colors.primary : '#555555'}
-            /> {title}
-        </Text>
+            />
+            <Text
+                style={{ color: (isVisible || !isAllSelect) ? theme.colors.primary : theme.colors.black }}
+            >{title}</Text>
+        </Pressable>
         {
             isVisible &&
             <BottomSheet

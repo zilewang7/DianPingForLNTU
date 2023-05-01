@@ -4,6 +4,7 @@ import { View, StyleSheet, FlatList, ImageBackground, RefreshControl, Pressable 
 import { Text, useTheme } from '@rneui/themed';
 import { Image } from 'expo-image';
 import { ScreenWidth } from '@rneui/base';
+import { cloneDeep } from 'lodash';
 import { Filter } from './components/filter';
 import { hexToRgba } from '../util/color';
 import { getBusinessList } from '../api/business.api';
@@ -27,9 +28,16 @@ export function BusinessList() {
             })
         }
 
-        const { json } = await getBusinessList(filter);
-        setBusinessData(json);
-        setIsRefresh(false)
+        setTimeout(async () => {
+            const transFilter = cloneDeep(filter)
+            transFilter[0].forEach((v, i) => {
+                transFilter[0][i] = (v[0] === '一' ? '1' : '2') + '-' + (v.match(/(\d+(\.\d+)?)楼/)[1]).toString() + '-';
+            })
+
+            const { json } = await getBusinessList(transFilter);
+            setBusinessData(json);
+            setIsRefresh(false)
+        });
     }
 
     useEffect(() => { onFilterChange() }, [])
@@ -74,6 +82,9 @@ export function BusinessList() {
                     />
                 }
                 numColumns={columnNum}
+                onEndReached={() => {
+                    // setBusinessData(list => [...list, ...list]);
+                }}
                 renderItem={({ item }) => {
                     const place = item.address.split('-')
                     return (
@@ -120,7 +131,7 @@ export function BusinessList() {
                         </Pressable>
                     )
                 }}
-                ListFooterComponent={<Text style={{ textAlign: 'center', marginVertical: 20 }} h4>你到达了没有店的荒原</Text>}
+                ListFooterComponent={<Text style={{ textAlign: 'center', paddingVertical: 20, marginBottom: -60 }} h4>你到达了没有店的荒原</Text>}
             />
         </>
     )
