@@ -1,8 +1,9 @@
 import { ButtonGroup, Text } from '@rneui/themed';
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { View, StyleSheet } from 'react-native';
 import { ModalCard } from '../components/components/modalCard';
 import { CanteenModel } from '../components/threeJS/CanteenModel';
+import { useRoute } from '@react-navigation/native';
 
 
 function ModelScreen({ setTabSwitchAllowed }) {
@@ -12,6 +13,7 @@ function ModelScreen({ setTabSwitchAllowed }) {
     const [reloadModel, setReload] = useState(false);
 
     const [onSelect, setOnSelect] = useState(false);
+    const [businessNeedLocate, setBusinessNeedLocate] = useState(null);
 
     const selectedFloors = selectedFloorsIndex.map((index) => {
         if (index === 0) return '1'
@@ -29,6 +31,17 @@ function ModelScreen({ setTabSwitchAllowed }) {
     const FirstCanteenMolal = require('../assets/canteen/一食堂.glb');
     const SecondCanteenMolal = require('../assets/canteen/一食堂一楼.glb');
 
+
+    const params: any = useRoute().params;
+    useEffect(() => {
+        if (params?.address) {
+            const place = params.address.split('-');
+            setSelectedCanteen(place[0] - 1)
+            setBusinessNeedLocate(params.address);
+        }
+    }, [params?.address])
+
+
     return (
         <View style={styles.canteenScreen}>
             <ButtonGroup
@@ -39,6 +52,7 @@ function ModelScreen({ setTabSwitchAllowed }) {
                     setSelectedFloors([0, 1, 2]);
                     setSelectedRestaurant(null);
                     setOnSelect(false)
+                    setBusinessNeedLocate(null)
                     setReload(true);
                     setTimeout(() => {
                         setReload(false)
@@ -55,6 +69,7 @@ function ModelScreen({ setTabSwitchAllowed }) {
                 reloadModel={reloadModel}
                 onSelect={onSelect}
                 setOnSelect={setOnSelect}
+                businessNeedLocate={businessNeedLocate}
             />
             <ButtonGroup
                 buttons={['1楼', '1.5楼', '2楼']}

@@ -58,12 +58,18 @@ dependencies:
   expo-image-picker:
     specifier: ~14.1.1
     version: 14.1.1(expo@48.0.10)
+  expo-linear-gradient:
+    specifier: ~12.1.2
+    version: 12.1.2(expo@48.0.10)
   expo-media-library:
     specifier: ~15.2.3
     version: 15.2.3(expo@48.0.10)
   expo-secure-store:
     specifier: ~12.1.1
     version: 12.1.1(expo@48.0.10)
+  expo-sharing:
+    specifier: ~11.2.2
+    version: 11.2.2(expo@48.0.10)
   expo-splash-screen:
     specifier: ~0.18.1
     version: 0.18.1(expo-modules-autolinking@1.1.2)(expo@48.0.10)
@@ -109,6 +115,9 @@ dependencies:
   react-native-svg:
     specifier: 13.4.0
     version: 13.4.0(react-native@0.71.6)(react@18.2.0)
+  react-native-view-shot:
+    specifier: 3.5.0
+    version: 3.5.0(react-native@0.71.6)(react@18.2.0)
   react-redux:
     specifier: ^8.0.5
     version: 8.0.5(@types/react@18.0.33)(react-dom@18.2.0)(react-native@0.71.6)(react@18.2.0)(redux@4.2.1)
@@ -4156,6 +4165,14 @@ packages:
       expo: 48.0.10(@babel/core@7.20.2)
     dev: false
 
+  /expo-linear-gradient@12.1.2(expo@48.0.10):
+    resolution: {integrity: sha512-e1d6Hq5qsRL8sWutrOuQhuir4vHiRJ1PmvDIL8P33mt51Y8VFTQjTG/mr5qJlT8lUD/ADJfaBLzV7SNqSuDTLQ==}
+    peerDependencies:
+      expo: '*'
+    dependencies:
+      expo: 48.0.10(@babel/core@7.20.2)
+    dev: false
+
   /expo-media-library@15.2.3(expo@48.0.10):
     resolution: {integrity: sha512-Oz8b8Xsvfj7YcutUBtI84NUIqSnt7iCM5HZ5DyKoWKKiDK/+aUuj3RXNQELG8jUw6pQPgEwgbZ1+J8SdH/y9jw==}
     peerDependencies:
@@ -4184,6 +4201,14 @@ packages:
 
   /expo-secure-store@12.1.1(expo@48.0.10):
     resolution: {integrity: sha512-phD8e8mlJWaESUBCpHq0GjS3OiqZ7g+I6SpTGQpt+xSS0pEE1ZUBXnIF+WR2OvoseKiS9ODzDl85CUlut/eNKw==}
+    peerDependencies:
+      expo: '*'
+    dependencies:
+      expo: 48.0.10(@babel/core@7.20.2)
+    dev: false
+
+  /expo-sharing@11.2.2(expo@48.0.10):
+    resolution: {integrity: sha512-4Lhm1eS/CFIzX+JPuxMUTWBt9rv/WdvJvpQ9y+71bL/9w9dhvsdt9tv0SsNZATz4hk0tbrYD8ZEUsgiHiT1KkQ==}
     peerDependencies:
       expo: '*'
     dependencies:
@@ -6844,6 +6869,16 @@ packages:
     dependencies:
       prop-types: 15.8.1
       yargs: 16.2.0
+    dev: false
+
+  /react-native-view-shot@3.5.0(react-native@0.71.6)(react@18.2.0):
+    resolution: {integrity: sha512-+/a0zcEcCzAwuzQTU7CmwR1/bDcuy3Yj7093xI3Dhcjccb3FwxNiRyIBonsMSj3fQMmBcqV5d8DGCAeOJ5Ij3A==}
+    peerDependencies:
+      react: '*'
+      react-native: '*'
+    dependencies:
+      react: 18.2.0
+      react-native: 0.71.6(@babel/core@7.20.2)(@babel/preset-env@7.21.4)(react@18.2.0)
     dev: false
 
   /react-native@0.71.6(@babel/core@7.20.2)(@babel/preset-env@7.21.4)(react@18.2.0):

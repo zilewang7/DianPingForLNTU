@@ -3,6 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 interface User {
   username: string;
   avatarUrl?: string;
+  starBusiness?: string[];
 }
 
 const initialState: User = {

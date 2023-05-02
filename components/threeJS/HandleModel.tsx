@@ -16,6 +16,7 @@ export function HandleModel(
     setTabSwitchAllowed,
     setTarget,
     setOnSelect,
+    businessNeedLocate,
   }
     : {
       modalFile: any,
@@ -25,6 +26,7 @@ export function HandleModel(
       setTabSwitchAllowed: React.Dispatch<React.SetStateAction<boolean>>
       setTarget: React.Dispatch<any>,
       setOnSelect: React.Dispatch<React.SetStateAction<boolean>>,
+      businessNeedLocate: string,
     }) {
   const { theme } = useTheme();
 
@@ -112,6 +114,22 @@ export function HandleModel(
       setTabSwitchAllowed(true)
     }
   }, [childrenRefs]);
+
+  useEffect(() => {
+    if (businessNeedLocate) {
+      const newState = [...childrenState];
+
+      newState.forEach((childState) => {
+        if (childState.name === businessNeedLocate) {
+          childState.isSelect = true;
+          setNewTarget(childState.position);
+          setOnSelect(true);
+        } else {
+          childState.isSelect = false;
+        }
+      });
+    }
+  }, [businessNeedLocate])
 
   return (
     <group scale={0.1}>
