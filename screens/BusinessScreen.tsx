@@ -150,8 +150,11 @@ function BusinessScreen({ navigation }) {
                                 title: '分享', icon: 'sharealt', onPress: async () => {
                                     try {
                                         setScreenShot(true);
-                                        const uri = await captureRef(viewShotRef, { fileName: `${name}(${params.placeText})by工大点评` })
-                                        await Sharing.shareAsync(uri);
+                                        await new Promise(resolve => setTimeout(resolve)); // 等待渲染完成
+                                        const uri = await captureRef(viewShotRef,
+                                            { fileName: `${name}(${params.placeText})by工大点评` }
+                                        )
+                                        await Sharing.shareAsync('file://' + uri);
                                     } catch (error) {
                                         console.error(error);
                                     } finally {
