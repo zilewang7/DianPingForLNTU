@@ -34,8 +34,8 @@ function BusinessScreen({ navigation }) {
 
     const isStar = userInfo.starBusiness?.includes(address);
 
-    const startRating = () => {
-        navigation.navigate('发布点评', { address });
+    const startRating = (rating?) => {
+        navigation.navigate('发布点评', { address, rating });
     };
 
     useEffect(() => {
@@ -129,7 +129,7 @@ function BusinessScreen({ navigation }) {
 
                                     </View>
                                     <Divider style={{ marginVertical: 10 }} />
-                                    <Pressable style={{ alignItems: 'center' }} onPress={startRating}>
+                                    <Pressable style={{ alignItems: 'center' }} onPress={() => startRating()}>
                                         <Text h4>评分：{rating || '暂无'}</Text>
                                         <StarRatingDisplay
                                             rating={rating || 5}
@@ -140,18 +140,22 @@ function BusinessScreen({ navigation }) {
                                     <Divider style={{ marginVertical: 10, marginHorizontal: -15 }} />
                                     <Text h4>用户评价</Text>
                                     {
-                                        posts.length || (
-                                            <View style={{
-                                                height: ScreenHeight - (Platform.OS === "ios" ? 120 : headerHeight) - 75,
-                                                justifyContent: 'center',
-                                                alignItems: 'center'
-                                            }}>
-                                                <View style={{ alignItems: 'center' }}>
-                                                    <Text h4>暂无评价</Text>
-                                                    <Pressable onPress={startRating}><Text>为这家店添加首个评价 &gt;</Text></Pressable>
+                                        posts.length ?
+                                            (
+                                                <></>
+                                            )
+                                            : (
+                                                <View style={{
+                                                    height: ScreenHeight - (Platform.OS === "ios" ? 120 : headerHeight) - 75,
+                                                    justifyContent: 'center',
+                                                    alignItems: 'center'
+                                                }}>
+                                                    <View style={{ alignItems: 'center' }}>
+                                                        <Text h4>暂无评价</Text>
+                                                        <Pressable onPress={() => startRating()}><Text>为这家店添加首个评价 &gt;</Text></Pressable>
+                                                    </View>
                                                 </View>
-                                            </View>
-                                        )
+                                            )
                                     }
                                 </View>
                             </>
@@ -215,7 +219,7 @@ function BusinessScreen({ navigation }) {
                 <Button
                     containerStyle={{ width: '40%', justifyContent: 'center', paddingRight: 20 }}
                     buttonStyle={{ borderRadius: 10, height: 45, justifyContent: 'center' }}
-                    onPress={startRating}
+                    onPress={() => startRating()}
                 >
                     <Icon name="edit" type='antdesign' />
                     <Text> 我要点评</Text>
