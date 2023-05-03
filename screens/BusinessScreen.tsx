@@ -34,7 +34,9 @@ function BusinessScreen({ navigation }) {
 
     const isStar = userInfo.starBusiness?.includes(address);
 
-    const startRating = () => { };
+    const startRating = () => {
+        navigation.navigate('发布点评', { address });
+    };
 
     useEffect(() => {
         navigation.setOptions({
