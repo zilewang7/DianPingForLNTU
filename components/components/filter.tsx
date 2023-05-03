@@ -107,7 +107,7 @@ export const Filter = ({ index, title, option, filter, isVisible, select, close,
                         </View>
                     </View>
                 </ListItem>
-                <View style={{ flexDirection: 'row', }}>
+                <View style={{ flexDirection: 'row', backgroundColor: theme.colors.background }}>
                     <Button
                         title="取消"
                         buttonStyle={{

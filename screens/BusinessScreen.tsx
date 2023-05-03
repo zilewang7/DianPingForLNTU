@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import { View, StyleSheet, Pressable, Platform, FlatList } from 'react-native';
 import { useRoute } from '@react-navigation/native';
 import { Image } from 'expo-image';
-import { Button, Icon, useTheme, Text } from '@rneui/themed';
+import { Button, Icon, useTheme, Text, Divider } from '@rneui/themed';
 import * as Sharing from 'expo-sharing';
 import { MyImageViewer } from '../components/components/imgVIewer';
 import { addBusinessStar } from '../api/business.api';
@@ -14,6 +14,7 @@ import { ScreenHeight } from '@rneui/base';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useHeaderHeight } from '@react-navigation/elements';
 import { hexToRgba } from '../util/color';
+import { StarRatingDisplay } from 'react-native-star-rating-widget';
 
 
 function BusinessScreen({ navigation }) {
@@ -25,13 +26,16 @@ function BusinessScreen({ navigation }) {
 
     const viewShotRef = useRef<any>();
 
-    const { address, name, pictureUrl, posts } = params.business;
+    const { address, name, pictureUrl, type, rating, posts = [] } = params.business;
 
     const [imageViewerVisible, setImageViewerVisible] = useState(false);
     const [onScreenShot, setScreenShot] = useState(false);
     const [headerAlpha, setHeaderAlpha] = useState(0);
 
     const isStar = userInfo.starBusiness?.includes(address);
+
+    const startRating = () => { };
+
     useEffect(() => {
         navigation.setOptions({
             title: `${name}( ${params.placeText})`,
@@ -49,7 +53,8 @@ function BusinessScreen({ navigation }) {
                 images={[{ url: pictureUrl }]}
             />
             <FlatList
-                data={[0, 1, 2, 3]}
+                data={['header', ...posts]}
+                keyExtractor={item => item}
                 style={{ marginTop: -(innerWidth / 4 * 3) }}
                 showsVerticalScrollIndicator={false}
                 onScrollEndDrag={(event) => {
@@ -84,38 +89,73 @@ function BusinessScreen({ navigation }) {
                     />
                 }
                 stickyHeaderIndices={[0]}
-                renderItem={(item) => {
-                    if (item.index === 0) {
+                renderItem={({ index }) => {
+                    if (index === 0) {
                         return (
                             <>
                                 <Pressable
-                                    style={{ width: '100%', height: innerWidth / 2, zIndex: 1 }}
+                                    style={{ width: '100%', height: innerWidth / 2 - headerHeight, zIndex: 1 }}
                                     onPress={setImageViewerVisible.bind(this, true)}
                                 />
                                 <View style={{
-                                    height: 500,
                                     backgroundColor: theme.colors.background,
                                     borderTopLeftRadius: 25,
-                                    borderTopRightRadius: 25
+                                    borderTopRightRadius: 25,
+                                    paddingHorizontal: 20,
+                                    paddingVertical: 10,
                                 }}>
+                                    <Text h2>{name}</Text>
+                                    <View style={{ flexDirection: 'row' }}>
+                                        {
+                                            [params.placeText, type].map(text => (
+                                                <Text
+                                                    key={text}
+                                                    style={{
+                                                        alignSelf: 'flex-start',
+                                                        paddingHorizontal: 4,
+                                                        borderRadius: 5,
+                                                        backgroundColor: hexToRgba(theme.colors.primary, '0.15'),
+                                                        color: theme.colors.primary,
+                                                        overflow: 'hidden',
+                                                        marginRight: 5,
+                                                    }}
+                                                >
+                                                    {text}
+                                                </Text>)
+                                            )
+                                        }
 
+                                    </View>
+                                    <Divider style={{ marginVertical: 10 }} />
+                                    <Pressable style={{ alignItems: 'center' }} onPress={startRating}>
+                                        <Text h4>评分：{rating || '暂无'}</Text>
+                                        <StarRatingDisplay
+                                            rating={rating || 5}
+                                            style={{ marginTop: 5 }}
+                                            color={rating ? undefined : theme.colors.disabled}
+                                        />
+                                    </Pressable>
+                                    <Divider style={{ marginVertical: 10, marginHorizontal: -15 }} />
+                                    <Text h4>用户评价</Text>
+                                    {
+                                        posts.length || (
+                                            <View style={{
+                                                height: ScreenHeight - (Platform.OS === "ios" ? 120 : headerHeight) - 75,
+                                                justifyContent: 'center',
+                                                alignItems: 'center'
+                                            }}>
+                                                <View style={{ alignItems: 'center' }}>
+                                                    <Text h4>暂无评价</Text>
+                                                    <Pressable onPress={startRating}><Text>为这家店添加首个评价 &gt;</Text></Pressable>
+                                                </View>
+                                            </View>
+                                        )
+                                    }
                                 </View>
                             </>
                         )
                     }
-                    return <View style={{ height: 500, backgroundColor: theme.colors.background }}>
-                        <Text>
-                            内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容
-                            内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容
-                            内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容
-                            内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容
-                            内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容
-                            内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容
-                            内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容
-                            内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容
-                            内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容
-                            内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容
-                        </Text>
+                    return <View key={index} style={{ height: 500, backgroundColor: theme.colors.background }}>
                     </View>
                 }}
             />
@@ -163,7 +203,7 @@ function BusinessScreen({ navigation }) {
                                 }
                             },
                         ].map((item) => (
-                            <Pressable onPress={item.onPress}>
+                            <Pressable key={item.title} onPress={item.onPress}>
                                 <Icon name={item.icon} type='antdesign' color={item.color} />
                                 <Text style={{ fontSize: 12, marginTop: 4 }}>{item.title}</Text>
                             </Pressable>
@@ -173,6 +213,7 @@ function BusinessScreen({ navigation }) {
                 <Button
                     containerStyle={{ width: '40%', justifyContent: 'center', paddingRight: 20 }}
                     buttonStyle={{ borderRadius: 10, height: 45, justifyContent: 'center' }}
+                    onPress={startRating}
                 >
                     <Icon name="edit" type='antdesign' />
                     <Text> 我要点评</Text>
@@ -186,14 +227,14 @@ function BusinessScreen({ navigation }) {
                         zIndex: 100,
                     }}>
                         <LinearGradient
-                            colors={['rgba(255, 255, 255, 0)', 'rgba(255, 255, 255, 1)']}
+                            colors={[hexToRgba(theme.colors.background, '0'), hexToRgba(theme.colors.background, '1')]}
                             style={{ height: ScreenHeight * 0.15, padding: 0, margin: 0 }}
                         />
                         <View style={{
                             flex: 1,
                             height: ScreenHeight * 0.15 + 1,
                             marginTop: -1,
-                            backgroundColor: 'white',
+                            backgroundColor: theme.colors.background,
                             flexDirection: 'row',
                             justifyContent: 'space-around',
                             alignItems: 'center',

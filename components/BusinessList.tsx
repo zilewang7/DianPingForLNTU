@@ -34,6 +34,9 @@ export function BusinessList() {
             transFilter[0].forEach((v, i) => {
                 transFilter[0][i] = (v[0] === '一' ? '1' : '2') + '-' + (v.match(/(\d+(\.\d+)?)楼/)[1]).toString() + '-';
             })
+            transFilter[2].forEach((v, i) => {
+                transFilter[2][i] = isNaN(v[1]) ? '0' : v[1];
+            })
 
             const { json } = await getBusinessList(transFilter);
             setBusinessData(json);
@@ -123,11 +126,23 @@ export function BusinessList() {
                                 >
                                     {placeText}
                                 </Text>
-                                <StarRatingDisplay
-                                    rating={4.5}
-                                    starSize={15}
-                                    starStyle={{ marginHorizontal: 0 }}
-                                />
+                                {
+                                    item.rating ? <StarRatingDisplay
+                                        rating={item.rating}
+                                        starSize={15}
+                                        starStyle={{ marginHorizontal: 0 }}
+                                    /> : (
+                                        <View style={{ flexDirection: 'row' }}>
+                                            <StarRatingDisplay
+                                                rating={5}
+                                                starSize={15}
+                                                color={theme.colors.disabled}
+                                                starStyle={{ marginHorizontal: 0 }}
+                                            />
+                                            <Text style={{ fontSize: 12, color: theme.colors.disabled }}> 暂无评分</Text>
+                                        </View>
+                                    )
+                                }
                                 <Text style={{ color: hexToRgba(theme.colors.secondary, '0.7'), alignSelf: 'flex-end' }}>{item.type}</Text>
                             </View>
                         </Pressable>
