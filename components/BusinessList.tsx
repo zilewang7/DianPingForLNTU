@@ -9,39 +9,46 @@ import { Filter } from './components/filter';
 import { hexToRgba } from '../util/color';
 import { getBusinessList } from '../api/business.api';
 import { BusinessFilterList } from '../constants/business';
-import { navigate } from '../navigation/RootNavigation';
 
 
-export function BusinessList() {
+export function BusinessList({ navigation }) {
     const { theme } = useTheme();
 
     const [filter, setFilter] = useState(BusinessFilterList.map((v) => v.option));
     const [filterSelectIndex, setFilterSelectIndex] = useState<number | null>(null);
     const [businessData, setBusinessData] = useState([]);
     const [isRefresh, setIsRefresh] = useState(false);
+    const [currentBusiness, setCurrentBusiness] = useState<any>();
 
     const onFilterChange = async (newFilter?, index?) => {
         setIsRefresh(true);
+        const currentFilter = cloneDeep(filter);
         if (newFilter) {
-            setFilter((filter) => {
-                filter[index] = newFilter;
-                return filter;
-            })
+            currentFilter[index] = newFilter;
+            setFilter(currentFilter);
         }
 
-        setTimeout(async () => {
-            const transFilter = cloneDeep(filter)
-            transFilter[0].forEach((v, i) => {
-                transFilter[0][i] = (v[0] === '一' ? '1' : '2') + '-' + (v.match(/(\d+(\.\d+)?)楼/)[1]).toString() + '-';
-            })
-            transFilter[2].forEach((v, i) => {
-                transFilter[2][i] = isNaN(v[1]) ? '0' : v[1];
-            })
+        const transFilter = cloneDeep(currentFilter)
+        transFilter[0].forEach((v, i) => {
+            transFilter[0][i] = (v[0] === '一' ? '1' : '2') + '-' + (v.match(/(\d+(\.\d+)?)楼/)[1]).toString() + '-';
+        })
+        transFilter[2].forEach((v, i) => {
+            transFilter[2][i] = isNaN(v[1]) ? '0' : v[1];
+        })
 
-            const { json } = await getBusinessList(transFilter);
-            setBusinessData(json);
-            setIsRefresh(false)
-        });
+        const { json } = await getBusinessList(transFilter);
+        setBusinessData(json);
+        setIsRefresh(false)
+        return json;
+    }
+
+    const refreshBusiness = () => {
+        onFilterChange().then((json) => {
+            const newBusinessData = json.filter(({ address }) => address === currentBusiness)[0];
+            const place = newBusinessData.address.split('-');
+            const placeText = `${place[0]} 食堂 ${place[1]} 楼`;
+            navigation.navigate("商家", { business: newBusinessData, placeText, refreshBusiness });
+        })
     }
 
     useEffect(() => { onFilterChange() }, [])
@@ -94,7 +101,10 @@ export function BusinessList() {
                     const placeText = `${place[0]} 食堂 ${place[1]} 楼`
                     return (
                         <Pressable
-                            onPress={() => { navigate("商家", { business: item, placeText }); }}
+                            onPress={() => {
+                                setCurrentBusiness(item.address)
+                                navigation.navigate("商家", { business: item, placeText, refreshBusiness });
+                            }}
                             style={{
                                 flexDirection: 'row',
                                 marginBottom: 10,

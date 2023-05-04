@@ -1,5 +1,5 @@
-import React, { useMemo, useState } from 'react'
-import { Alert, KeyboardAvoidingView, Platform, View } from 'react-native'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
+import { Alert, KeyboardAvoidingView, Platform, Pressable, View } from 'react-native'
 import { Button, Dialog, Divider, Input, LinearProgress, Text } from '@rneui/themed';
 import StarRating from 'react-native-star-rating-widget';
 import { useRoute } from '@react-navigation/native';
@@ -16,13 +16,15 @@ interface UpdatingState {
 export function EditPostScreen({ navigation }) {
     const params: any = useRoute().params;
 
-    const { address, rating = 0 } = params;
+    const { address, rating, placeText, refreshBusiness } = params;
 
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
-    const [starRating, setStarRating] = useState<number>(rating);
+    const [starRating, setStarRating] = useState<number | undefined>(rating);
     const [images, setImages] = useState<string[]>([]);
     const [updating, setUpdatingState] = useState<number>(0);
+
+    const contentRef = useRef<any>();
 
     const updatingState: UpdatingState = useMemo(() => {
         switch (updating) {
@@ -59,6 +61,12 @@ export function EditPostScreen({ navigation }) {
                 }
         }
     }, [updating])
+
+    useEffect(() => {
+        navigation.setOptions({
+            title: `${placeText}`,
+        });
+    }, []);
 
     const commitPost = async () => {
         const checkRating = (starRating === 0);
@@ -115,9 +123,12 @@ export function EditPostScreen({ navigation }) {
                     value={title}
                     placeholder='标题（可不填）'
                     onChangeText={setTitle}
+                    inputContainerStyle={{ borderBottomWidth: 0 }}
+                    containerStyle={{ marginBottom: -35, marginTop: 5 }}
                 />
+                <Divider style={{ marginVertical: 10 }} />
                 <View style={{ alignItems: 'center' }}>
-                    <Text h4>我的评分：{starRating}</Text>
+                    <Text h4>我的评分：{starRating ? starRating : '请打分'}</Text>
                     <StarRating
                         rating={starRating}
                         onChange={rating => { setStarRating(rating < 0.5 ? 0.5 : rating) }}
@@ -125,30 +136,38 @@ export function EditPostScreen({ navigation }) {
                     />
                 </View>
                 <Divider style={{ marginVertical: 10 }} />
-                {
-                    Platform.OS == "ios" ?
-                        <>
-                            <KeyboardAvoidingView style={{ flex: 1 }} behavior='padding'>
-                                <Input
-                                    value={content}
-                                    placeholder='内容（必填）'
-                                    multiline={true}
-                                    inputContainerStyle={{ borderBottomWidth: 0 }}
-                                    onChangeText={setContent}
-                                />
-                            </KeyboardAvoidingView>
-                            <KeyboardAvoidingView behavior='padding' />
-                        </>
-                        :
-                        <Input
-                            value={content}
-                            placeholder='内容（必填）'
-                            multiline={true}
-                            inputContainerStyle={{ borderBottomWidth: 0 }}
-                            containerStyle={{ flex: 1 }}
-                            onChangeText={setContent}
-                        />
-                }
+                <Pressable style={{ flex: 1 }} onPress={() => {
+                    contentRef.current.blur();
+                    contentRef.current.focus();
+                }}>
+                    {
+                        Platform.OS == "ios" ?
+                            <>
+                                <KeyboardAvoidingView style={{ flex: 1 }} behavior='padding'>
+                                    <Input
+                                        value={content}
+                                        placeholder='内容（必填）'
+                                        multiline={true}
+                                        inputContainerStyle={{ borderBottomWidth: 0 }}
+                                        onChangeText={setContent}
+                                        ref={contentRef}
+                                    />
+                                </KeyboardAvoidingView>
+                                <KeyboardAvoidingView behavior='padding' />
+                            </>
+                            :
+                            <Input
+                                value={content}
+                                placeholder='内容（必填）'
+                                multiline={true}
+                                inputContainerStyle={{ borderBottomWidth: 0 }}
+                                containerStyle={{ flex: 1 }}
+                                onChangeText={setContent}
+                                ref={contentRef}
+                            />
+                    }
+                </Pressable>
+                <Divider style={{ marginVertical: 10 }} />
                 <ImagePicker images={images} setImages={setImages} />
                 <Button onPress={commitPost} title={'提交'} />
             </View>
@@ -164,10 +183,13 @@ export function EditPostScreen({ navigation }) {
                 />
                 <Text style={{ marginBottom: 10 }}>{updatingState.message}</Text>
                 {
-                    updatingState.message === '提交失败' && <Button onPress={() => setUpdatingState(-1)} title='返回' />
+                    updatingState.message === '提交失败' && <Button onPress={() => setUpdatingState(0)} title='返回' />
                 }
                 {
-                    updatingState.message === '提交成功' && <Button onPress={() => { setUpdatingState(0), navigation.goBack() }} title='确定' />
+                    updatingState.message === '提交成功' && <Button onPress={() => {
+                        setUpdatingState(0);
+                        refreshBusiness();
+                    }} title='确定' />
                 }
             </Dialog>
         </>

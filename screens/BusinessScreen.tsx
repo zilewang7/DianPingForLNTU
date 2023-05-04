@@ -15,6 +15,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useHeaderHeight } from '@react-navigation/elements';
 import { hexToRgba } from '../util/color';
 import StarRating from 'react-native-star-rating-widget';
+import { PostListBox } from '../components/PostListBox';
 
 
 function BusinessScreen({ navigation }) {
@@ -42,7 +43,13 @@ function BusinessScreen({ navigation }) {
     }
 
     const startRating = () => {
-        navigation.navigate('发布点评', { address, rating: isUserRating ? ratingValue : 5 });
+        navigation.navigate('发布点评', {
+            address,
+            rating: isUserRating ? ratingValue : undefined,
+            placeText: `${name}( ${params.placeText})`,
+            refreshBusiness: params.refreshBusiness,
+            oldParams: params
+        });
     };
 
     useEffect(() => {
@@ -50,6 +57,10 @@ function BusinessScreen({ navigation }) {
             title: `${name}( ${params.placeText})`,
         });
     }, []);
+    useEffect(() => {
+        setRatingValue(rating);
+        setIsUserRating(false);
+    }, [rating]);
     return (
         <View style={{ flex: 1 }} ref={viewShotRef}>
             <Image
@@ -176,8 +187,7 @@ function BusinessScreen({ navigation }) {
                             </>
                         )
                     }
-                    return <View key={index} style={{ height: 500, backgroundColor: theme.colors.background }}>
-                    </View>
+                    return <PostListBox postId={index} />
                 }}
             />
             <View style={{
