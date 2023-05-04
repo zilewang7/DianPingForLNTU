@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { View, StyleSheet, Pressable, Platform, FlatList } from 'react-native';
+import { View, StyleSheet, Pressable, Platform, FlatList, TouchableOpacity } from 'react-native';
 import { useRoute } from '@react-navigation/native';
 import { Image } from 'expo-image';
 import { Button, Icon, useTheme, Text, Divider } from '@rneui/themed';
@@ -14,7 +14,7 @@ import { ScreenHeight } from '@rneui/base';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useHeaderHeight } from '@react-navigation/elements';
 import { hexToRgba } from '../util/color';
-import { StarRatingDisplay } from 'react-native-star-rating-widget';
+import StarRating from 'react-native-star-rating-widget';
 
 
 function BusinessScreen({ navigation }) {
@@ -31,11 +31,18 @@ function BusinessScreen({ navigation }) {
     const [imageViewerVisible, setImageViewerVisible] = useState(false);
     const [onScreenShot, setScreenShot] = useState(false);
     const [headerAlpha, setHeaderAlpha] = useState(0);
+    const [ratingValue, setRatingValue] = useState(rating);
+    const [isUserRating, setIsUserRating] = useState(false);
 
     const isStar = userInfo.starBusiness?.includes(address);
 
-    const startRating = (rating?) => {
-        navigation.navigate('发布点评', { address, rating });
+    const onRatingChange = (rating) => {
+        setIsUserRating(true);
+        setRatingValue(rating < 0.5 ? 0.5 : rating)
+    }
+
+    const startRating = () => {
+        navigation.navigate('发布点评', { address, rating: isUserRating ? ratingValue : 5 });
     };
 
     useEffect(() => {
@@ -109,7 +116,7 @@ function BusinessScreen({ navigation }) {
                                     <Text h2>{name}</Text>
                                     <View style={{ flexDirection: 'row' }}>
                                         {
-                                            [params.placeText, type].map(text => (
+                                            [params.placeText, type, rating ? `${rating}分` : '暂无评分'].map(text => (
                                                 <Text
                                                     key={text}
                                                     style={{
@@ -129,14 +136,22 @@ function BusinessScreen({ navigation }) {
 
                                     </View>
                                     <Divider style={{ marginVertical: 10 }} />
-                                    <Pressable style={{ alignItems: 'center' }} onPress={() => startRating()}>
-                                        <Text h4>评分：{rating || '暂无'}</Text>
-                                        <StarRatingDisplay
-                                            rating={rating || 5}
+                                    <View style={{ alignItems: 'center', }}>
+                                        <Text h4>{isUserRating && '我的'}评分：{ratingValue || '暂无'}</Text>
+                                        {
+                                            isUserRating &&
+                                            <TouchableOpacity style={{ position: 'absolute', flexDirection: 'row', right: 0, bottom: 5 }} onPress={startRating}>
+                                                <Text style={{ fontSize: 15 }}>发布</Text>
+                                                <Icon name='right' type='antdesign' size={18} />
+                                            </TouchableOpacity>
+                                        }
+                                        <StarRating
+                                            rating={ratingValue}
                                             style={{ marginTop: 5 }}
-                                            color={rating ? undefined : theme.colors.disabled}
+                                            color={ratingValue ? undefined : theme.colors.disabled}
+                                            onChange={onRatingChange}
                                         />
-                                    </Pressable>
+                                    </View>
                                     <Divider style={{ marginVertical: 10, marginHorizontal: -15 }} />
                                     <Text h4>用户评价</Text>
                                     {
@@ -152,7 +167,7 @@ function BusinessScreen({ navigation }) {
                                                 }}>
                                                     <View style={{ alignItems: 'center' }}>
                                                         <Text h4>暂无评价</Text>
-                                                        <Pressable onPress={() => startRating()}><Text>为这家店添加首个评价 &gt;</Text></Pressable>
+                                                        <TouchableOpacity onPress={() => startRating()}><Text>为这家店添加首个评价 &gt;</Text></TouchableOpacity>
                                                     </View>
                                                 </View>
                                             )
@@ -209,10 +224,10 @@ function BusinessScreen({ navigation }) {
                                 }
                             },
                         ].map((item) => (
-                            <Pressable key={item.title} onPress={item.onPress}>
+                            <TouchableOpacity key={item.title} onPress={item.onPress}>
                                 <Icon name={item.icon} type='antdesign' color={item.color} />
                                 <Text style={{ fontSize: 12, marginTop: 4 }}>{item.title}</Text>
-                            </Pressable>
+                            </TouchableOpacity>
                         ))
                     }
                 </View>

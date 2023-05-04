@@ -1,12 +1,15 @@
-import React, { useState } from 'react';
-import { StyleSheet, View, TouchableOpacity, ScrollView, Alert } from 'react-native';
+import React, { useRef, useState } from 'react';
+import { StyleSheet, View, TouchableOpacity, ScrollView, Pressable } from 'react-native';
 import { Image } from 'expo-image'
-import { Text } from '@rneui/themed'
+import { Icon, Text } from '@rneui/themed'
 import { pickImage } from '../util/img';
-import { ScreenWidth } from '@rneui/base';
+import { MyImageViewer } from './components/imgVIewer';
 
-export const ImagePicker = ({ }) => {
-    const [images, setImages] = useState([]);
+export const ImagePicker = ({ images, setImages }: { images: string[], setImages: React.Dispatch<React.SetStateAction<string[]>> }) => {
+    const [viewerVisible, setViewerVisible] = useState(false);
+    const [imageIndex, setImageIndex] = useState(0);
+
+    const scrollViewRef = useRef<any>();
 
     const selectImage = async () => {
         try {
@@ -14,6 +17,7 @@ export const ImagePicker = ({ }) => {
             if (uri) {
                 setImages([...images, uri]);
             }
+            scrollViewRef.current?.scrollToEnd();
         } catch (err) {
             console.error(err);
         }
@@ -27,36 +31,57 @@ export const ImagePicker = ({ }) => {
 
     const renderImages = () => {
         return images.map((image, index) => (
-            <View key={index} style={styles.imageContainer}>
+            <Pressable
+                key={index}
+                style={styles.imageContainer}
+                onPress={(() => {
+                    setImageIndex(index);
+                    setViewerVisible(true);
+                })}
+            >
                 <Image source={{ uri: image }} style={styles.image} />
                 <TouchableOpacity style={styles.removeButton} onPress={() => removeImage(index)}>
-                    <Text style={styles.removeButtonText}>X</Text>
+                    <Icon name='closecircle' type='antdesign' color='red' size={20} />
                 </TouchableOpacity>
-            </View>
+                <View style={{ height: 20, marginTop: -20, backgroundColor: 'rgba(255,255,255, 0.5)', alignItems: 'center' }}>
+                    <Text>{index + 1}</Text>
+                </View>
+            </Pressable>
         ));
     };
 
     return (
-        <View style={styles.container}>
-            {renderImages()}
-            <TouchableOpacity style={styles.imageContainer} onPress={selectImage}>
-                <View style={styles.placeholderContainer}>
-                    <Text style={styles.placeholderText}>选择图片</Text>
-                </View>
-            </TouchableOpacity>
+        <View>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.container} ref={scrollViewRef}>
+                {renderImages()}
+                {
+                    images.length < 9 && <TouchableOpacity style={styles.imageContainer} onPress={selectImage}>
+                        <View style={styles.placeholderContainer}>
+                            <Text style={styles.placeholderText}>选择图片</Text>
+                        </View>
+                    </TouchableOpacity>
+                }
+            </ScrollView>
+            {
+                viewerVisible &&
+                <MyImageViewer
+                    visible={viewerVisible}
+                    onCancel={setViewerVisible.bind(this, false)}
+                    images={images.map(url => ({ url }))}
+                    index={imageIndex}
+                />
+            }
         </View>
     );
 };
 
 const styles = StyleSheet.create({
     container: {
+        width: '100%',
         flexDirection: 'row',
-        flexWrap: 'wrap',
-        width: ScreenWidth * 0.9,
     },
     imageContainer: {
         margin: 5,
-        position: 'relative',
     },
     image: {
         width: 100,
@@ -64,14 +89,8 @@ const styles = StyleSheet.create({
     },
     removeButton: {
         position: 'absolute',
-        top: 0,
-        right: 0,
-        backgroundColor: 'red',
-        borderRadius: 50,
-        width: 20,
-        height: 20,
-        alignItems: 'center',
-        justifyContent: 'center',
+        top: 2,
+        right: 2,
     },
     removeButtonText: {
         color: 'white',

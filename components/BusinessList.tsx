@@ -134,7 +134,7 @@ export function BusinessList() {
                                     /> : (
                                         <View style={{ flexDirection: 'row' }}>
                                             <StarRatingDisplay
-                                                rating={5}
+                                                rating={0}
                                                 starSize={15}
                                                 color={theme.colors.disabled}
                                                 starStyle={{ marginHorizontal: 0 }}
