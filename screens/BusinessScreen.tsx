@@ -37,6 +37,8 @@ function BusinessScreen({ navigation }) {
 
     const isStar = userInfo.starBusiness?.includes(address);
 
+    const shortRating = parseInt((rating * 10).toString()) / 10
+
     const onRatingChange = (rating) => {
         setIsUserRating(true);
         setRatingValue(rating < 0.5 ? 0.5 : rating)
@@ -48,7 +50,7 @@ function BusinessScreen({ navigation }) {
             rating: isUserRating ? ratingValue : undefined,
             placeText: `${name}( ${params.placeText})`,
             refreshBusiness: params.refreshBusiness,
-            oldParams: params
+            backToBusiness: params.backToBusiness,
         });
     };
 
@@ -88,8 +90,8 @@ function BusinessScreen({ navigation }) {
                 }}
                 onScroll={(event) => {
                     const { contentOffset } = event.nativeEvent;
-                    if (contentOffset.y < (innerWidth / 2)) {
-                        setHeaderAlpha(contentOffset.y / (innerWidth / 2))
+                    if (contentOffset.y < (innerWidth / 2 - headerHeight)) {
+                        setHeaderAlpha(contentOffset.y / (innerWidth / 2 - headerHeight))
                     } else {
                         setHeaderAlpha(1)
                     }
@@ -127,7 +129,7 @@ function BusinessScreen({ navigation }) {
                                     <Text h2>{name}</Text>
                                     <View style={{ flexDirection: 'row' }}>
                                         {
-                                            [params.placeText, type, rating ? `${rating}分` : '暂无评分'].map(text => (
+                                            [params.placeText, type, rating ? `${shortRating}分` : '暂无评分'].map(text => (
                                                 <Text
                                                     key={text}
                                                     style={{
@@ -148,7 +150,7 @@ function BusinessScreen({ navigation }) {
                                     </View>
                                     <Divider style={{ marginVertical: 10 }} />
                                     <View style={{ alignItems: 'center', }}>
-                                        <Text h4>{isUserRating && '我的'}评分：{ratingValue || '暂无'}</Text>
+                                        <Text h4>{isUserRating ? ('我的评分：' + ratingValue) : ('评分：' + (rating ? shortRating : '暂无'))}</Text>
                                         {
                                             isUserRating &&
                                             <TouchableOpacity style={{ position: 'absolute', flexDirection: 'row', right: 0, bottom: 5 }} onPress={startRating}>

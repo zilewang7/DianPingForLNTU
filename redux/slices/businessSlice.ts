@@ -9,15 +9,13 @@ interface Business {
   rating: number;
 }
 
-interface FuncObject {
-  [key: string]: (...args: any[]) => any;
-}
-
 type BusinessList = Business[];
 
-const initialState: { businessList: BusinessList; helper: FuncObject } = {
+const initialState: {
+  businessList: BusinessList;
+  currentBusiness?: Business;
+} = {
   businessList: [],
-  helper: {},
 };
 
 const businessSlice = createSlice({
@@ -27,17 +25,18 @@ const businessSlice = createSlice({
     updateBusinessList: (state, action) => {
       return {
         businessList: action.payload,
-        helper: state.helper,
+        currentBusiness: state.currentBusiness,
       };
     },
-    updateHelper: (state, action) => {
+    setCurrentBusinessData: (state, action) => {
       return {
         businessList: state.businessList,
-        helper: action.payload,
+        currentBusiness: action.payload,
       };
     },
   },
 });
 
-export const { updateBusinessList, updateHelper } = businessSlice.actions;
+export const { updateBusinessList, setCurrentBusinessData } =
+  businessSlice.actions;
 export default businessSlice.reducer;

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { StarRatingDisplay } from 'react-native-star-rating-widget';
 import { View, StyleSheet, FlatList, ImageBackground, RefreshControl, Pressable } from 'react-native';
 import { Text, useTheme } from '@rneui/themed';
@@ -10,7 +10,7 @@ import { hexToRgba } from '../util/color';
 import { getBusinessList } from '../api/business.api';
 import { BusinessFilterList } from '../constants/business';
 import { useDispatch } from 'react-redux';
-import { updateBusinessList } from '../redux/slices/businessSlice';
+import { setCurrentBusinessData, updateBusinessList } from '../redux/slices/businessSlice';
 
 
 export function BusinessList({ navigation }) {
@@ -21,7 +21,7 @@ export function BusinessList({ navigation }) {
     const [filterSelectIndex, setFilterSelectIndex] = useState<number | null>(null);
     const [businessData, setBusinessData] = useState([]);
     const [isRefresh, setIsRefresh] = useState(false);
-    const [currentBusiness, setCurrentBusiness] = useState<any>();
+    const currentBusinessRef = useRef<any>();
 
     const onFilterChange = async (newFilter?, index?) => {
         setIsRefresh(true);
@@ -46,12 +46,19 @@ export function BusinessList({ navigation }) {
         return json;
     }
 
-    const refreshBusiness = () => {
-        onFilterChange().then((json) => {
-            const newBusinessData = json.filter(({ address }) => address === currentBusiness)[0];
-            const place = newBusinessData.address.split('-');
-            const placeText = `${place[0]} 食堂 ${place[1]} 楼`;
-            navigation.navigate("商家", { business: newBusinessData, placeText, refreshBusiness });
+    const refreshBusiness = async () => {
+        await onFilterChange().then(json => {
+            setFilter(BusinessFilterList.map((v) => v.option));
+            const currentBusinessData = json.filter(({ address }) => address === currentBusinessRef.current)[0];
+            dispatch(setCurrentBusinessData(currentBusinessData));
+        })
+    }
+
+    const backToBusiness = async (newBusinessData) => {
+        const place = newBusinessData.address.split('-');
+        const placeText = `${place[0]} 食堂 ${place[1]} 楼`;
+        setTimeout(() => {
+            navigation.navigate("商家", { business: newBusinessData, placeText, refreshBusiness, backToBusiness });
         })
     }
 
@@ -105,9 +112,11 @@ export function BusinessList({ navigation }) {
                     const placeText = `${place[0]} 食堂 ${place[1]} 楼`
                     return (
                         <Pressable
-                            onPress={() => {
-                                setCurrentBusiness(item.address)
-                                navigation.navigate("商家", { business: item, placeText, refreshBusiness });
+                            onPress={async () => {
+                                currentBusinessRef.current = item.address;
+                                setTimeout(() => {
+                                    navigation.navigate("商家", { business: item, placeText, refreshBusiness, backToBusiness });
+                                })
                             }}
                             style={{
                                 flexDirection: 'row',

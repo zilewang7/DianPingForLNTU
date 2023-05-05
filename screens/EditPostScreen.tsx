@@ -6,6 +6,7 @@ import { useRoute } from '@react-navigation/native';
 import { createPost } from '../api/post.api';
 import { ImagePicker } from '../components/pickImage';
 import { uploadImg } from '../util/img';
+import { useSelector } from '../redux/hook';
 
 interface UpdatingState {
     visible: boolean;
@@ -16,7 +17,8 @@ interface UpdatingState {
 export function EditPostScreen({ navigation }) {
     const params: any = useRoute().params;
 
-    const { address, rating, placeText, refreshBusiness } = params;
+    const currentBusiness = useSelector(state => state.business.currentBusiness);
+    const { address, rating, placeText, refreshBusiness, backToBusiness } = params;
 
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
@@ -110,7 +112,9 @@ export function EditPostScreen({ navigation }) {
         })
 
         if (newPost.ok) {
-            setUpdatingState(Infinity);
+            refreshBusiness().then(() => {
+                setUpdatingState(Infinity);
+            })
         } else {
             setUpdatingState(-1);
         }
@@ -188,7 +192,7 @@ export function EditPostScreen({ navigation }) {
                 {
                     updatingState.message === '提交成功' && <Button onPress={() => {
                         setUpdatingState(0);
-                        refreshBusiness();
+                        backToBusiness(currentBusiness);
                     }} title='确定' />
                 }
             </Dialog>
