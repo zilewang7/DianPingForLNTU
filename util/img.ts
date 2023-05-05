@@ -101,6 +101,18 @@ export const saveImg = async (imageUri) => {
 export const uploadImg = async (uri, type = "unclassified") => {
   const sign = await getUploadSign();
 
+  const fileType = uri.split(".").pop();
+
+  if (fileType !== "jpeg") {
+    const newFileUri = uri + ".jpeg";
+
+    await FileSystem.moveAsync({
+      from: uri,
+      to: newFileUri,
+    });
+    uri = newFileUri;
+  }
+
   if (sign.ok) {
     const { policy, OSSAccessKeyId, signature, userId } = sign.json;
 
