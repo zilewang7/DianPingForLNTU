@@ -23,8 +23,8 @@ function ModelScreen({ setTabSwitchAllowed }) {
 
     const [selectedRestaurant, setSelectedRestaurant] = useState(null);
 
-    const onSelectRestaurant = (name) => {
-        setSelectedRestaurant(name);
+    const onSelectRestaurant = (info) => {
+        setSelectedRestaurant(info);
         setModalState(true);
     }
 
@@ -89,7 +89,7 @@ function ModelScreen({ setTabSwitchAllowed }) {
                 transparent={true}
                 touchOutOfCard={setModalState.bind(this, false)}
             >
-                <Text>{selectedRestaurant}</Text>
+                <Text>{JSON.stringify(selectedRestaurant)}</Text>
             </ModalCard>
         </View>
     )

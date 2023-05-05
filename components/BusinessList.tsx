@@ -9,9 +9,12 @@ import { Filter } from './components/filter';
 import { hexToRgba } from '../util/color';
 import { getBusinessList } from '../api/business.api';
 import { BusinessFilterList } from '../constants/business';
+import { useDispatch } from 'react-redux';
+import { updateBusinessList } from '../redux/slices/businessSlice';
 
 
 export function BusinessList({ navigation }) {
+    const dispatch = useDispatch();
     const { theme } = useTheme();
 
     const [filter, setFilter] = useState(BusinessFilterList.map((v) => v.option));
@@ -38,6 +41,7 @@ export function BusinessList({ navigation }) {
 
         const { json } = await getBusinessList(transFilter);
         setBusinessData(json);
+        dispatch(updateBusinessList(json));
         setIsRefresh(false)
         return json;
     }

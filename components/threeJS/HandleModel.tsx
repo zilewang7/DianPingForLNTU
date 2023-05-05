@@ -1,8 +1,9 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 import { useFrame, useLoader } from "@react-three/fiber/native"
 import { useTheme } from "@rneui/themed";
 import { THREE } from "expo-three";
+import { useSelector } from "../../redux/hook";
 
 type Position = { x: number, y: number, z: number }
 
@@ -29,6 +30,14 @@ export function HandleModel(
       businessNeedLocate: string,
     }) {
   const { theme } = useTheme();
+  const businessList = useSelector(state => state.business.businessList)
+  const businessMap = useMemo(() => {
+    const map = {};
+    businessList.forEach(business => {
+      map[business.address] = business;
+    });
+    return map;
+  }, [businessList])
 
   const gltf = useLoader(GLTFLoader, modalFile)
 
@@ -37,7 +46,8 @@ export function HandleModel(
     gltf.scene.children.map((child) => ({
       name: child.name,
       isSelect: false,
-      position: { x: child.position.x / 10, y: child.position.y / 10, z: child.position.z / 10 }
+      position: { x: child.position.x / 10, y: child.position.y / 10, z: child.position.z / 10 },
+      info: businessMap[child.name]
     }))
   );
   const [newTarget, setNewTarget] = useState({ x: 0, y: 0, z: 0 });
@@ -63,7 +73,7 @@ export function HandleModel(
     setChildrenState(newState);
 
     // 选择时回调
-    onSelectRestaurant(newState[index].name);
+    onSelectRestaurant(newState[index].info);
   }
 
   useFrame((_state, delta) => {
