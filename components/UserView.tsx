@@ -58,6 +58,7 @@ export function UserView({ isCurrentUser = false, username, avatarUrl }: UserInf
                                 pickAvatar()
                             }
                         } : undefined}
+                        size='lg'
                     >
                         {isCurrentUser && username !== '未登录' && <Avatar.Accessory size={20} onPress={pickAvatar} />}
                     </MyAvatar>

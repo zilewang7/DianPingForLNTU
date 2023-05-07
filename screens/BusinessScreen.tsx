@@ -17,6 +17,8 @@ import { hexToRgba } from '../util/color';
 import StarRating from 'react-native-star-rating-widget';
 import { PostListBox } from '../components/PostListBox';
 import StaggeredList from '@mindinventory/react-native-stagger-view';
+import { ScrollView } from 'react-native-gesture-handler';
+import { getPosts } from '../api/post.api';
 
 
 function BusinessScreen({ navigation }) {
@@ -35,6 +37,7 @@ function BusinessScreen({ navigation }) {
     const [headerAlpha, setHeaderAlpha] = useState(0);
     const [ratingValue, setRatingValue] = useState(rating);
     const [isUserRating, setIsUserRating] = useState(false);
+    const [postsInfo, setPostsInfo] = useState([]);
 
     const isStar = userInfo.starBusiness?.includes(address);
 
@@ -55,6 +58,18 @@ function BusinessScreen({ navigation }) {
         });
     };
 
+    const getPostsInfo = () => {
+        getPosts({ posts }).then((res) => {
+            if (res.ok) {
+                setPostsInfo(res.json)
+            }
+        }).catch((err) => { console.error(err) })
+    }
+
+    useEffect(() => {
+        getPostsInfo();
+    }, [JSON.stringify(posts)])
+
     useEffect(() => {
         navigation.setOptions({
             title: `${name}( ${params.placeText})`,
@@ -66,6 +81,20 @@ function BusinessScreen({ navigation }) {
     }, [rating]);
     return (
         <View style={{ flex: 1 }} ref={viewShotRef}>
+            <View
+                style={{
+                    height: headerHeight,
+                    marginBottom: -headerHeight,
+                    zIndex: 100,
+                    backgroundColor: hexToRgba(theme.colors.background, (headerAlpha).toString()),
+                    ...(headerAlpha === 1) ? {
+                        elevation: 4,
+                        shadowOffset: { width: 0, height: 4 },
+                        shadowOpacity: 0.1,
+                        shadowRadius: 4,
+                    } : {}
+                }}
+            />
             <Image
                 style={{ width: '100%', height: innerWidth / 4 * 3 }}
                 source={pictureUrl}
@@ -75,10 +104,7 @@ function BusinessScreen({ navigation }) {
                 onCancel={setImageViewerVisible.bind(this, false)}
                 images={[{ url: pictureUrl }]}
             />
-            <StaggeredList
-                data={['header', ...posts]}
-                keyExtractor={item => item}
-                style={{ marginTop: -(innerWidth / 4 * 3) }}
+            <ScrollView
                 showsVerticalScrollIndicator={false}
                 onScrollEndDrag={(event) => {
                     const { velocity, contentOffset } = event.nativeEvent;
@@ -89,6 +115,7 @@ function BusinessScreen({ navigation }) {
                         setImageViewerVisible(true)
                     }
                 }}
+                scrollEventThrottle={4}
                 onScroll={(event) => {
                     const { contentOffset } = event.nativeEvent;
                     if (contentOffset.y < (innerWidth / 2 - headerHeight)) {
@@ -97,102 +124,96 @@ function BusinessScreen({ navigation }) {
                         setHeaderAlpha(1)
                     }
                 }}
-                ListHeaderComponent={
-                    <View
-                        style={{
-                            height: headerHeight,
-                            backgroundColor: hexToRgba(theme.colors.background, (headerAlpha).toString()),
-                            ...(headerAlpha === 1) ? {
-                                elevation: 4,
-                                shadowOffset: { width: 0, height: 4 },
-                                shadowOpacity: 0.1,
-                                shadowRadius: 4,
-                            } : {}
-                        }}
+                style={{ marginTop: -(innerWidth / 4 * 3) }}
+            >
+                <>
+                    <Pressable
+                        style={{ width: '100%', height: innerWidth / 2, zIndex: 1 }}
+                        onPress={setImageViewerVisible.bind(this, true)}
                     />
-                }
-                stickyHeaderIndices={[0]}
-                renderItem={({ index, item }) => {
-                    if (index === 0) {
-                        return (
-                            <>
-                                <Pressable
-                                    style={{ width: '100%', height: innerWidth / 2 - headerHeight, zIndex: 1 }}
-                                    onPress={setImageViewerVisible.bind(this, true)}
-                                />
-                                <View style={{
-                                    backgroundColor: theme.colors.background,
-                                    borderTopLeftRadius: 25,
-                                    borderTopRightRadius: 25,
-                                    paddingHorizontal: 20,
-                                    paddingVertical: 10,
-                                }}>
-                                    <Text h2>{name}</Text>
-                                    <View style={{ flexDirection: 'row' }}>
-                                        {
-                                            [params.placeText, type, rating ? `${shortRating}分` : '暂无评分'].map(text => (
-                                                <Text
-                                                    key={text}
-                                                    style={{
-                                                        alignSelf: 'flex-start',
-                                                        paddingHorizontal: 4,
-                                                        borderRadius: 5,
-                                                        backgroundColor: hexToRgba(theme.colors.primary, '0.15'),
-                                                        color: theme.colors.primary,
-                                                        overflow: 'hidden',
-                                                        marginRight: 5,
-                                                    }}
-                                                >
-                                                    {text}
-                                                </Text>)
-                                            )
-                                        }
+                    <View style={{
+                        backgroundColor: theme.colors.background,
+                        borderTopLeftRadius: 25,
+                        borderTopRightRadius: 25,
+                        paddingHorizontal: 20,
+                        paddingVertical: 10,
+                    }}>
+                        <Text h2>{name}</Text>
+                        <View style={{ flexDirection: 'row' }}>
+                            {
+                                [params.placeText, type, rating ? `${shortRating}分` : '暂无评分'].map(text => (
+                                    <Text
+                                        key={text}
+                                        style={{
+                                            alignSelf: 'flex-start',
+                                            paddingHorizontal: 4,
+                                            borderRadius: 5,
+                                            backgroundColor: hexToRgba(theme.colors.primary, '0.15'),
+                                            color: theme.colors.primary,
+                                            overflow: 'hidden',
+                                            marginRight: 5,
+                                        }}
+                                    >
+                                        {text}
+                                    </Text>)
+                                )
+                            }
 
+                        </View>
+                        <Divider style={{ marginVertical: 10 }} />
+                        <View style={{ alignItems: 'center', }}>
+                            <Text h4>{isUserRating ? ('我的评分：' + ratingValue) : ('评分：' + (rating ? shortRating : '暂无'))}</Text>
+                            {
+                                isUserRating &&
+                                <TouchableOpacity style={{ position: 'absolute', flexDirection: 'row', right: 0, bottom: 5 }} onPress={startRating}>
+                                    <Text style={{ fontSize: 15 }}>发布</Text>
+                                    <Icon name='right' type='antdesign' size={18} />
+                                </TouchableOpacity>
+                            }
+                            <StarRating
+                                rating={ratingValue}
+                                style={{ marginTop: 5 }}
+                                color={ratingValue ? undefined : theme.colors.disabled}
+                                onChange={onRatingChange}
+                            />
+                        </View>
+                        <Divider style={{ marginVertical: 10, marginHorizontal: -15 }} />
+                        <Text h4>用户评价</Text>
+                    </View>
+                    {
+                        posts.length ?
+                            (
+                                <StaggeredList
+                                    style={{ backgroundColor: theme.colors.background, }}
+                                    animationType='EFFECTIVE'
+                                    data={postsInfo}
+                                    renderItem={({ item }) => <PostListBox postInfo={item} />}
+                                />
+                            )
+                            : (
+                                <View style={{
+                                    height: ScreenHeight - (Platform.OS === "ios" ? 120 : headerHeight) - 75,
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                    backgroundColor: theme.colors.background,
+                                }}>
+                                    <View style={{ alignItems: 'center' }}>
+                                        <Text h4>暂无评价</Text>
+                                        <TouchableOpacity onPress={() => startRating()}><Text>为这家店添加首个评价 &gt;</Text></TouchableOpacity>
                                     </View>
-                                    <Divider style={{ marginVertical: 10 }} />
-                                    <View style={{ alignItems: 'center', }}>
-                                        <Text h4>{isUserRating ? ('我的评分：' + ratingValue) : ('评分：' + (rating ? shortRating : '暂无'))}</Text>
-                                        {
-                                            isUserRating &&
-                                            <TouchableOpacity style={{ position: 'absolute', flexDirection: 'row', right: 0, bottom: 5 }} onPress={startRating}>
-                                                <Text style={{ fontSize: 15 }}>发布</Text>
-                                                <Icon name='right' type='antdesign' size={18} />
-                                            </TouchableOpacity>
-                                        }
-                                        <StarRating
-                                            rating={ratingValue}
-                                            style={{ marginTop: 5 }}
-                                            color={ratingValue ? undefined : theme.colors.disabled}
-                                            onChange={onRatingChange}
-                                        />
-                                    </View>
-                                    <Divider style={{ marginVertical: 10, marginHorizontal: -15 }} />
-                                    <Text h4>用户评价</Text>
-                                    {
-                                        posts.length ?
-                                            (
-                                                <></>
-                                            )
-                                            : (
-                                                <View style={{
-                                                    height: ScreenHeight - (Platform.OS === "ios" ? 120 : headerHeight) - 75,
-                                                    justifyContent: 'center',
-                                                    alignItems: 'center'
-                                                }}>
-                                                    <View style={{ alignItems: 'center' }}>
-                                                        <Text h4>暂无评价</Text>
-                                                        <TouchableOpacity onPress={() => startRating()}><Text>为这家店添加首个评价 &gt;</Text></TouchableOpacity>
-                                                    </View>
-                                                </View>
-                                            )
-                                    }
                                 </View>
-                            </>
-                        )
+                            )
                     }
-                    return <PostListBox index={index} postInfo={item} />
-                }}
-            />
+                    <View style={{
+                        backgroundColor: theme.colors.background,
+                        alignItems: 'center',
+                        height: 200,
+                        marginBottom: -200,
+                    }}>
+                        <Text h3 style={{ marginTop: 10 }}>我是有底线的</Text>
+                    </View>
+                </>
+            </ScrollView>
             <View style={{
                 flexDirection: 'row',
                 height: 60,
