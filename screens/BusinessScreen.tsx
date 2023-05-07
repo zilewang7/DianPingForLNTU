@@ -16,6 +16,7 @@ import { useHeaderHeight } from '@react-navigation/elements';
 import { hexToRgba } from '../util/color';
 import StarRating from 'react-native-star-rating-widget';
 import { PostListBox } from '../components/PostListBox';
+import StaggeredList from '@mindinventory/react-native-stagger-view';
 
 
 function BusinessScreen({ navigation }) {
@@ -74,7 +75,7 @@ function BusinessScreen({ navigation }) {
                 onCancel={setImageViewerVisible.bind(this, false)}
                 images={[{ url: pictureUrl }]}
             />
-            <FlatList
+            <StaggeredList
                 data={['header', ...posts]}
                 keyExtractor={item => item}
                 style={{ marginTop: -(innerWidth / 4 * 3) }}
@@ -111,7 +112,7 @@ function BusinessScreen({ navigation }) {
                     />
                 }
                 stickyHeaderIndices={[0]}
-                renderItem={({ index }) => {
+                renderItem={({ index, item }) => {
                     if (index === 0) {
                         return (
                             <>
@@ -189,7 +190,7 @@ function BusinessScreen({ navigation }) {
                             </>
                         )
                     }
-                    return <PostListBox postId={index} />
+                    return <PostListBox index={index} postInfo={item} />
                 }}
             />
             <View style={{

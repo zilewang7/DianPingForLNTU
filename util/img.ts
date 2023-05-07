@@ -2,7 +2,7 @@ import * as ImagePicker from "expo-image-picker";
 import * as MediaLibrary from "expo-media-library";
 import * as FileSystem from "expo-file-system";
 import { SaveFormat, manipulateAsync } from "expo-image-manipulator";
-import { Alert } from "react-native";
+import { Alert, Platform } from "react-native";
 import { ImgOssHost } from "./http";
 import { store } from "../redux/store";
 import { getUploadSign, updateAvatarUrl, uploadImage } from "../api/img.api";
@@ -103,7 +103,7 @@ export const uploadImg = async (uri, type = "unclassified") => {
 
   const fileType = uri.split(".").pop();
 
-  if (fileType !== "jpeg") {
+  if (fileType !== "jpeg" && Platform.OS === "ios") {
     const newFileUri = uri + ".jpeg";
 
     await FileSystem.moveAsync({
