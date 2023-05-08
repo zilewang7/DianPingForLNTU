@@ -42,18 +42,18 @@ export function PostListBox({ postInfo }) {
             }
             <View style={{ padding: 10 }}>
                 {
-                    imageUrls ?
-                        <Text style={{ fontSize: 18, fontWeight: 'bold' }}>{title || content}</Text>
+                    imageUrls.length ?
+                        <Text style={{ fontSize: 18, fontWeight: 'bold' }} numberOfLines={1} ellipsizeMode='tail'>{title || content}</Text>
                         :
                         (
 
                             title ? (
                                 <>
-                                    <Text style={{ fontSize: 18, fontWeight: 'bold' }}>{title}</Text>
-                                    <Text>{content}</Text>
+                                    <Text style={{ fontSize: 18, fontWeight: 'bold' }} numberOfLines={1} ellipsizeMode='tail'>{title}</Text>
+                                    <Text numberOfLines={3} ellipsizeMode='tail'>{content}</Text>
                                 </>
                             ) : (
-                                <Text style={{ fontSize: 18, fontWeight: 'bold' }}>{content}</Text>
+                                <Text style={{ fontSize: 18 }} numberOfLines={5} ellipsizeMode='tail'>{content}</Text>
                             )
                         )
                 }
@@ -74,7 +74,7 @@ export function PostListBox({ postInfo }) {
                 <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                         <MyAvatar avatarUrl={avatarUrl} size='sm' children={undefined} onAvatarPress={undefined} />
-                        <Text style={{ fontSize: 12 }}> {username}</Text>
+                        <Text style={{ fontSize: 12, maxWidth: ITEM_WIDTH / 3 + 8 }} numberOfLines={1} ellipsizeMode='tail'> {username}</Text>
                     </View>
                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                         <Icon name='arrow-up-bold' type='material-community' size={20} color={theme.colors.primary} style={{ paddingLeft: 3, marginRight: -3 }} />

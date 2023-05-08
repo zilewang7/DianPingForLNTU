@@ -29,12 +29,12 @@ function BusinessScreen({ navigation }) {
     const headerHeight = useHeaderHeight();
 
     const viewShotRef = useRef<any>();
+    const headerRef = useRef<any>();
 
     const { address, name, pictureUrl, type, rating, posts = [] } = params.business;
 
     const [imageViewerVisible, setImageViewerVisible] = useState(false);
     const [onScreenShot, setScreenShot] = useState(false);
-    const [headerAlpha, setHeaderAlpha] = useState(0);
     const [ratingValue, setRatingValue] = useState(rating);
     const [isUserRating, setIsUserRating] = useState(false);
     const [postsInfo, setPostsInfo] = useState([]);
@@ -82,17 +82,11 @@ function BusinessScreen({ navigation }) {
     return (
         <View style={{ flex: 1 }} ref={viewShotRef}>
             <View
+                ref={headerRef}
                 style={{
                     height: headerHeight,
                     marginBottom: -headerHeight,
                     zIndex: 100,
-                    backgroundColor: hexToRgba(theme.colors.background, (headerAlpha).toString()),
-                    ...(headerAlpha === 1) ? {
-                        elevation: 4,
-                        shadowOffset: { width: 0, height: 4 },
-                        shadowOpacity: 0.1,
-                        shadowRadius: 4,
-                    } : {}
                 }}
             />
             <Image
@@ -119,9 +113,25 @@ function BusinessScreen({ navigation }) {
                 onScroll={(event) => {
                     const { contentOffset } = event.nativeEvent;
                     if (contentOffset.y < (innerWidth / 2 - headerHeight)) {
-                        setHeaderAlpha(contentOffset.y / (innerWidth / 2 - headerHeight))
+                        headerRef?.current.setNativeProps({
+                            style: {
+                                backgroundColor: hexToRgba(theme.colors.background, (contentOffset.y / (innerWidth / 2 - headerHeight)).toString()),
+                                elevation: null,
+                                shadowOffset: null,
+                                shadowOpacity: null,
+                                shadowRadius: null,
+                            }
+                        })
                     } else {
-                        setHeaderAlpha(1)
+                        headerRef?.current.setNativeProps({
+                            style: {
+                                backgroundColor: hexToRgba(theme.colors.background, '1'),
+                                elevation: 4,
+                                shadowOffset: { width: 0, height: 4 },
+                                shadowOpacity: 0.1,
+                                shadowRadius: 4,
+                            }
+                        })
                     }
                 }}
                 style={{ marginTop: -(innerWidth / 4 * 3) }}
