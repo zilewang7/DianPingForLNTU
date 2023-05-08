@@ -103,9 +103,6 @@ dependencies:
   react-native-image-zoom-viewer:
     specifier: ^3.0.1
     version: 3.0.1(react-native@0.71.6)(react@18.2.0)
-  react-native-qiniu:
-    specifier: git+https://git@github.com/sishuguojixuefu/react-native-sdk.git
-    version: github.com/sishuguojixuefu/react-native-sdk/2126e72fe2c0c0ef684b497dbd2461e2d2e39e47
   react-native-safe-area-context:
     specifier: ^4.5.0
     version: 4.5.0(react-native@0.71.6)(react@18.2.0)
@@ -3041,10 +3038,6 @@ packages:
     resolution: {integrity: sha512-3oSeUO0TMV67hN1AmbXsK4yaqU7tjiHlbxRDZOpH0KW9+CeX4bRAaX0Anxt0tx2MrpRpWwQaPwIlISEJhYU5Pw==}
     dev: false
 
-  /base-64@0.1.0:
-    resolution: {integrity: sha512-Y5gU45svrR5tI2Vt/X9GPd3L0HNIKzGu202EjxrXMpuc2V2CiKgemAbUUsqYmZJvPtCXoUKjNZwBJzsNScUbXA==}
-    dev: false
-
   /base64-js@1.5.1:
     resolution: {integrity: sha512-AKpaYlHn8t4SVbOHCy+b5+KKgvR4vrsD8vbvrbiQJps7fKDTkjkDry6ji0rUJjC0kzbNePLwzxq8iypo41qeWA==}
     dev: false
@@ -3640,10 +3633,6 @@ packages:
 
   /crypt@0.0.2:
     resolution: {integrity: sha512-mCxBlsHFYh9C+HVpiEacem8FEBnMXgU9gy4zmNC+SXAZNB/1idgp/aulFJ4FgCi7GPEVbfyng092GqL2k2rmow==}
-    dev: false
-
-  /crypto-js@3.3.0:
-    resolution: {integrity: sha512-DIT51nX0dCfKltpRiXV+/TVZq+Qq2NgF4644+K7Ttnla7zEzqc+kjJyiB96BHNyUTBxyjzRcZYpUdZa+QAqi6Q==}
     dev: false
 
   /crypto-js@4.1.1:
@@ -8500,14 +8489,4 @@ packages:
         optional: true
     dependencies:
       react: 18.2.0
-    dev: false
-
-  github.com/sishuguojixuefu/react-native-sdk/2126e72fe2c0c0ef684b497dbd2461e2d2e39e47:
-    resolution: {commit: 2126e72fe2c0c0ef684b497dbd2461e2d2e39e47, repo: https://git@github.com/sishuguojixuefu/react-native-sdk.git, type: git}
-    name: '@sishuguojixuefu/react-native-qiniu'
-    version: 0.3.0
-    dependencies:
-      base-64: 0.1.0
-      crypto-js: 3.3.0
-      url-parse: 1.5.10
     dev: false

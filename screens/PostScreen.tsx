@@ -1,35 +1,56 @@
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 import StaggeredList from '@mindinventory/react-native-stagger-view';
 import { Text, useTheme } from '@rneui/themed'
 import { useRoute } from '@react-navigation/native';
 import { useHeaderHeight } from '@react-navigation/elements';
-import { ScreenHeight } from '@rneui/base';
-import { View, Platform, Pressable } from 'react-native';
+import { ScreenHeight, ScreenWidth } from '@rneui/base';
+import { View, Platform, Image } from 'react-native';
 import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
-import { MyImageViewer } from '../components/components/imgVIewer';
 import { hexToRgba } from '../util/color';
 import { ScreenShotBottom } from '../components/components/screenShotBottom';
+import { ImageList } from '../components/components/imageList';
 
 export function PostScreen() {
     const postInfo: any = useRoute().params;
     const { theme } = useTheme();
 
-    const { rating, comments = [] } = postInfo;
+    const { imageUrls = [], username, avatarUrl, title, rating, content, createdAt, up, down, comments = [] } = postInfo;
+
 
     const headerHeight = useHeaderHeight();
 
     const viewShotRef = useRef<any>();
     const headerRef = useRef<any>(0);
 
-    const [imageViewerVisible, setImageViewerVisible] = useState(false);
+    const [imgIndex, setImgIndex] = React.useState(0);
     const [onScreenShot, setScreenShot] = useState(false);
 
     const shortRating = parseInt((rating * 10).toString()) / 10
 
+    const [aspectRatio, setAspectRatio] = useState(1);
+    const imageHeight = useMemo(() => {
+        const imgH = ScreenWidth / aspectRatio;
+        if (imgH < (ScreenHeight / 2)) {
+            return imgH;
+        } else {
+            return ScreenHeight / 2;
+        }
+    }, [aspectRatio, ScreenWidth, ScreenHeight])
+    useEffect(() => {
+        if (imageUrls.length) {
+            Image.getSize(
+                imageUrls[0] + '?x-oss-process=image/resize,h_50,m_lfit',
+                (width, height) => {
+                    setAspectRatio(width / height);
+                }
+            );
+        }
+    }, [imageUrls?.[0]])
+
     return (
         <View style={{ flex: 1 }} ref={viewShotRef}>
             <View
-                // ref={headerRef}
+                ref={headerRef}
                 style={{
                     height: headerHeight,
                     marginBottom: -headerHeight,
@@ -41,10 +62,10 @@ export function PostScreen() {
                 scrollEventThrottle={4}
                 onScroll={(event) => {
                     const { contentOffset } = event.nativeEvent;
-                    if (contentOffset.y < (innerWidth / 2 - headerHeight)) {
+                    if (contentOffset.y < (imageHeight - headerHeight)) {
                         headerRef?.current.setNativeProps({
                             style: {
-                                backgroundColor: hexToRgba(theme.colors.background, (contentOffset.y / (innerWidth / 2 - headerHeight)).toString()),
+                                backgroundColor: hexToRgba(theme.colors.background, (contentOffset.y / (imageHeight - headerHeight)).toString()),
                                 elevation: null,
                                 shadowOffset: null,
                                 shadowOpacity: null,
@@ -63,22 +84,30 @@ export function PostScreen() {
                         })
                     }
                 }}
-                style={{ marginTop: -(innerWidth / 4 * 3) }}
             >
                 <>
                     {
-                        // ImageList
+                        imageUrls.length ? (
+                            <>
+                                <View
+                                    style={{
+                                        width: '100%',
+                                        height: imageHeight,
+                                    }}
+                                >
+                                    <ImageList
+                                        index={imgIndex}
+                                        setIndex={setImgIndex}
+                                        imageUrls={imageUrls}
+                                        height={imageHeight}
+                                    />
+                                    <View style={{ width: '100%', height: 30, marginTop: -30, alignItems: 'center', justifyContent: 'center' }}>
+                                        <Text>{imgIndex + 1}/{imageUrls.length}</Text>
+                                    </View>
+                                </View>
+                            </>
+                        ) : <></>
                     }
-                    <MyImageViewer
-                        visible={imageViewerVisible}
-                        onCancel={setImageViewerVisible.bind(this, false)}
-                        images={[]}
-                        index={0}
-                    />
-                    <Pressable
-                        style={{ width: '100%', height: innerWidth / 2, zIndex: 1 }}
-                        onPress={setImageViewerVisible.bind(this, true)}
-                    />
                     {
                         comments.length ?
                             (
