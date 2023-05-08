@@ -71,7 +71,7 @@ export function EditPostScreen({ navigation }) {
     }, []);
 
     const commitPost = async () => {
-        const checkRating = (starRating === 0);
+        const checkRating = !starRating;
         const checkContent = (content === '');
         if (checkRating || checkContent) {
             Alert.alert('点评好像不完整呢', `还没有 ${checkRating ? '给这家店打分 ' : ''}${checkContent ? '填写点评内容 ' : ''}呢`)

@@ -1,24 +1,26 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { View, StyleSheet, Pressable, Platform, FlatList, TouchableOpacity } from 'react-native';
+import * as Sharing from 'expo-sharing';
+import StaggeredList from '@mindinventory/react-native-stagger-view';
+import StarRating from 'react-native-star-rating-widget';
 import { useRoute } from '@react-navigation/native';
 import { Image } from 'expo-image';
+import { useDispatch } from 'react-redux';
+import { captureRef } from 'react-native-view-shot';
+import { ScreenHeight } from '@rneui/base';
+import { useHeaderHeight } from '@react-navigation/elements';
+import { ScrollView } from 'react-native-gesture-handler';
+import { clone, sortBy } from 'lodash';
 import { Button, Icon, useTheme, Text, Divider } from '@rneui/themed';
-import * as Sharing from 'expo-sharing';
+import { View, StyleSheet, Pressable, Platform, TouchableOpacity } from 'react-native';
 import { MyImageViewer } from '../components/components/imgVIewer';
 import { addBusinessStar } from '../api/business.api';
 import { updateUser } from '../redux/slices/userSlice';
-import { useDispatch } from 'react-redux';
 import { useSelector } from '../redux/hook';
-import { captureRef } from 'react-native-view-shot';
-import { ScreenHeight } from '@rneui/base';
-import { LinearGradient } from 'expo-linear-gradient';
-import { useHeaderHeight } from '@react-navigation/elements';
 import { hexToRgba } from '../util/color';
-import StarRating from 'react-native-star-rating-widget';
 import { PostListBox } from '../components/PostListBox';
-import StaggeredList from '@mindinventory/react-native-stagger-view';
-import { ScrollView } from 'react-native-gesture-handler';
 import { getPosts } from '../api/post.api';
+import { ScreenShotBottom } from '../components/components/screenShotBottom';
+import { PostSortList } from '../constants/business';
 
 
 function BusinessScreen({ navigation }) {
@@ -37,7 +39,9 @@ function BusinessScreen({ navigation }) {
     const [onScreenShot, setScreenShot] = useState(false);
     const [ratingValue, setRatingValue] = useState(rating);
     const [isUserRating, setIsUserRating] = useState(false);
+    const [originPostInfo, setOriginPostInfo] = useState([]);
     const [postsInfo, setPostsInfo] = useState([]);
+    const [sortList, setSortList] = useState(PostSortList.reduce((acc, val) => { acc[val] = undefined; return acc; }, {}));
 
     const isStar = userInfo.starBusiness?.includes(address);
 
@@ -61,15 +65,64 @@ function BusinessScreen({ navigation }) {
     const getPostsInfo = () => {
         getPosts({ posts }).then((res) => {
             if (res.ok) {
+                setOriginPostInfo(res.json)
                 setPostsInfo(res.json)
             }
         }).catch((err) => { console.error(err) })
+    }
+    const onSortChange = async (sort) => {
+        let sortState;
+        if (sortList[sort] !== undefined) {
+            if (sortList[sort] === 1) {
+                setSortList(list => ({
+                    ...list,
+                    [sort]: 0,
+                }))
+                sortState = 0;
+            } else {
+                setSortList(PostSortList.reduce((acc, val) => { acc[val] = undefined; return acc; }, {}));
+                setPostsInfo([]);
+                setTimeout(() => { setPostsInfo(originPostInfo); })
+                return;
+            }
+        } else {
+            setSortList(PostSortList.reduce((acc, val) => {
+                acc[val] = val === sort ? 1 : undefined;
+                return acc;
+            }, {}));
+            sortState = 1;
+        }
+
+        setPostsInfo([]);
+        const sortedPosts = sortBy(originPostInfo,
+            (o) => {
+                switch (sort) {
+                    case '发布':
+                        return 'uid';
+                    case '回复':
+                        return 'commentsUpdatedAt';
+                    case '顶':
+                        return o.up.length;
+                    case '踩':
+                        return o.down.length;
+                    case '评分':
+                        return o.rating;
+                    default:
+                        return undefined;
+                }
+            }
+        );
+        if (sort === '回复') {
+            sortedPosts.reverse()
+        }
+        setTimeout(() => {
+            setPostsInfo(sortState ? sortedPosts.reverse() : sortedPosts)
+        })
     }
 
     useEffect(() => {
         getPostsInfo();
     }, [JSON.stringify(posts)])
-
     useEffect(() => {
         navigation.setOptions({
             title: `${name}( ${params.placeText})`,
@@ -190,37 +243,58 @@ function BusinessScreen({ navigation }) {
                         <Divider style={{ marginVertical: 10, marginHorizontal: -15 }} />
                         <Text h4>用户评价</Text>
                     </View>
-                    {
-                        posts.length ?
-                            (
-                                <StaggeredList
-                                    style={{ backgroundColor: theme.colors.background, }}
-                                    animationType='EFFECTIVE'
-                                    data={postsInfo}
-                                    renderItem={({ item }) => <PostListBox postInfo={item} />}
-                                />
-                            )
-                            : (
-                                <View style={{
-                                    height: ScreenHeight - (Platform.OS === "ios" ? 120 : headerHeight) - 75,
-                                    justifyContent: 'center',
-                                    alignItems: 'center',
-                                    backgroundColor: theme.colors.background,
-                                }}>
-                                    <View style={{ alignItems: 'center' }}>
-                                        <Text h4>暂无评价</Text>
-                                        <TouchableOpacity onPress={() => startRating()}><Text>为这家店添加首个评价 &gt;</Text></TouchableOpacity>
+                    <View style={{ backgroundColor: theme.colors.background, }}>
+                        {
+                            posts.length ?
+                                (
+                                    <StaggeredList
+                                        animationType='EFFECTIVE'
+                                        data={postsInfo}
+                                        ListHeaderComponent={(
+                                            <View style={{
+                                                flexDirection: 'row',
+                                                justifyContent: 'space-around',
+                                                paddingVertical: 4,
+                                            }}>
+                                                {
+                                                    PostSortList.map(sort => {
+                                                        const isOnSort = sortList[sort] !== undefined;
+                                                        return (
+                                                            <Pressable style={{ flexDirection: 'row', alignItems: 'center' }} onPress={() => { onSortChange(sort) }}>
+                                                                <Icon name={isOnSort ? ['sort-down', 'sort-up'][sortList[sort]] : 'sort'}
+                                                                    type='font-awesome'
+                                                                    size={18}
+                                                                    color={isOnSort ? theme.colors.primary : theme.colors.grey4}
+                                                                /><Text> {sort}</Text>
+                                                            </Pressable>
+                                                        )
+                                                    })
+                                                }
+                                            </View>
+                                        )}
+                                        renderItem={({ item }) => <PostListBox postInfo={item} navigation={navigation} />}
+                                    />
+                                )
+                                : (
+                                    <View style={{
+                                        height: ScreenHeight - (Platform.OS === "ios" ? 120 : headerHeight) - 75,
+                                        justifyContent: 'center',
+                                        alignItems: 'center',
+                                    }}>
+                                        <View style={{ alignItems: 'center' }}>
+                                            <Text h4>暂无评价</Text>
+                                            <TouchableOpacity onPress={() => startRating()}><Text>为这家店添加首个评价 &gt;</Text></TouchableOpacity>
+                                        </View>
                                     </View>
-                                </View>
-                            )
-                    }
-                    <View style={{
-                        backgroundColor: theme.colors.background,
-                        alignItems: 'center',
-                        height: 200,
-                        marginBottom: -200,
-                    }}>
-                        <Text h3 style={{ marginTop: 10 }}>我是有底线的</Text>
+                                )
+                        }
+                        <View style={{
+                            alignItems: 'center',
+                            height: 200,
+                            marginBottom: -200,
+                        }}>
+                            <Text h3 style={{ marginTop: 10 }}>我是有底线的</Text>
+                        </View>
                     </View>
                 </>
             </ScrollView>
@@ -286,33 +360,7 @@ function BusinessScreen({ navigation }) {
             </View>
             {
                 onScreenShot && (
-                    <View style={{
-                        height: ScreenHeight * 0.3,
-                        marginTop: - ScreenHeight * 0.3,
-                        zIndex: 100,
-                    }}>
-                        <LinearGradient
-                            colors={[hexToRgba(theme.colors.background, '0'), hexToRgba(theme.colors.background, '1')]}
-                            style={{ height: ScreenHeight * 0.15, padding: 0, margin: 0 }}
-                        />
-                        <View style={{
-                            flex: 1,
-                            height: ScreenHeight * 0.15 + 1,
-                            marginTop: -1,
-                            backgroundColor: theme.colors.background,
-                            flexDirection: 'row',
-                            justifyContent: 'space-around',
-                            alignItems: 'center',
-                        }}>
-                            <View>
-                                <Text h3>工大点评</Text>
-                                <Text style={{ margin: 5 }}>{name} - {params.placeText}</Text>
-                            </View>
-                            <View>
-                                <Text>我是二维码</Text>
-                            </View>
-                        </View>
-                    </View>
+                    <ScreenShotBottom ScreenHeight={ScreenHeight} content={`${name} - ${params.placeText}`} />
                 )
             }
         </View >

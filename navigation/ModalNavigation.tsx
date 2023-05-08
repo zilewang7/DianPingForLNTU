@@ -3,6 +3,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import LoginScreen from '../screens/LoginScreen';
 import BusinessScreen from '../screens/BusinessScreen';
 import { EditPostScreen } from '../screens/EditPostScreen';
+import { PostScreen } from '../screens/PostScreen';
 
 const Stack = createStackNavigator();
 
@@ -19,8 +20,14 @@ export const ModalNavigation = [
         options={{ headerTransparent: true }}
     />,
     <Stack.Screen
-        key={1}
+        key={3}
         name="发布点评"
         component={EditPostScreen}
+    />,
+    <Stack.Screen
+        key={4}
+        name="点评"
+        options={{ headerTransparent: true }}
+        component={PostScreen}
     />,
 ];

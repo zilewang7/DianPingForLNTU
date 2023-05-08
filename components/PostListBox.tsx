@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Icon, Text, useTheme } from '@rneui/themed'
-import { View, StyleSheet, Image as rnImg } from 'react-native'
+import { View, StyleSheet, Image as rnImg, Pressable } from 'react-native'
 import { ScreenWidth } from '@rneui/base';
 import { Image } from 'expo-image';
 import { MyAvatar } from './components/avatar';
@@ -9,10 +9,10 @@ import { StarRatingDisplay } from 'react-native-star-rating-widget';
 
 const ITEM_WIDTH = ScreenWidth / 2;
 
-export function PostListBox({ postInfo }) {
+export function PostListBox({ postInfo, navigation }) {
     const { theme } = useTheme();
 
-    const { username, avatarUrl, rating, title, content, imageUrls } = postInfo;
+    const { username, avatarUrl, rating, title, content, imageUrls, up, down } = postInfo;
 
     const [aspectRatio, setAspectRatio] = useState(1);
     useEffect(() => {
@@ -28,10 +28,15 @@ export function PostListBox({ postInfo }) {
 
 
     return (
-        <View style={{
-            ...styles.item,
-            backgroundColor: theme.colors.background,
-        }}>
+        <Pressable
+            style={{
+                ...styles.item,
+                backgroundColor: theme.colors.background,
+            }}
+            onPress={() => {
+                navigation.navigate('点评', postInfo)
+            }}
+        >
             {
                 imageUrls?.[0] && (
                     <Image
@@ -78,13 +83,13 @@ export function PostListBox({ postInfo }) {
                     </View>
                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                         <Icon name='arrow-up-bold' type='material-community' size={20} color={theme.colors.primary} style={{ paddingLeft: 3, marginRight: -3 }} />
-                        <Text>{114}</Text>
+                        <Text>{up.length}</Text>
                         <Icon name='arrow-down-bold' type='material-community' size={20} color={theme.colors.secondary} style={{ paddingTop: 1, marginBottom: -1, paddingLeft: 3, marginRight: -3 }} />
-                        <Text>{514}</Text>
+                        <Text>{down.length}</Text>
                     </View>
                 </View>
             </View>
-        </View >
+        </Pressable >
     );
 }
 

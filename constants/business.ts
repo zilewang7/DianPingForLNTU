@@ -21,3 +21,5 @@ export const BusinessFilterList = [
     option: ["暂无", "★1", "★2", "★3", "★4", "★5"],
   },
 ];
+
+export const PostSortList = ["发布", "回复", "顶", "踩", "评分"];
