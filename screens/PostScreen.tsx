@@ -14,24 +14,24 @@ import { formatDate } from '../util/time';
 import { StarRatingDisplay } from 'react-native-star-rating-widget';
 import { Pressable } from 'react-native';
 import { FollowButton } from '../components/components/followButton';
+import { votePost } from '../api/post.api';
+import { useSelector } from '../redux/hook';
 
 export function PostScreen({ navigation }) {
     const postInfo: any = useRoute().params;
+    const { _id, starPost } = useSelector(state => state.user);
     const { theme } = useTheme();
-
-    const { businessName, businessAddress, imageUrls = [], username, authorId, avatarUrl, title, rating, content, createdAt, up, down, comments = [] } = postInfo;
-
     const headerHeight = useHeaderHeight();
+
+    const { uid, businessName, businessAddress, imageUrls = [], username, authorId, avatarUrl, title, rating, content, createdAt, up, down, comments = [] } = postInfo;
 
     const viewShotRef = useRef<any>();
     const headerRef = useRef<any>(0);
 
     const [imgIndex, setImgIndex] = React.useState(0);
     const [onScreenShot, setScreenShot] = useState(false);
-
-    const shortRating = parseInt((rating * 10).toString()) / 10
-
     const [aspectRatio, setAspectRatio] = useState(1);
+
     const imageHeight = useMemo(() => {
         const imgH = ScreenWidth / aspectRatio;
         if (imgH < (ScreenHeight / 2)) {
@@ -40,6 +40,11 @@ export function PostScreen({ navigation }) {
             return ScreenHeight / 2;
         }
     }, [aspectRatio, ScreenWidth, ScreenHeight])
+
+    const bottomButtonState = useMemo(() => {
+
+    }, [_id, starPost, JSON.stringify(up), JSON.stringify(down)])
+
     useEffect(() => {
         if (imageUrls.length) {
             Image.getSize(
@@ -56,6 +61,10 @@ export function PostScreen({ navigation }) {
             title: `${businessName}(${place[0]}食堂${place[1]}楼) 点评`,
         });
     }, []);
+
+    const vote = (type) => {
+        votePost({ type, uid })
+    }
 
     return (
         <View style={{ flex: 1, backgroundColor: theme.colors.background }} ref={viewShotRef}>
@@ -210,6 +219,7 @@ export function PostScreen({ navigation }) {
                             selectIcon: 'arrow-up-bold',
                             type: 'material-community',
                             selectColor: theme.colors.primary,
+                            onPress: () => { vote('up') },
                         },
                         {
                             name: 'down',
@@ -217,6 +227,7 @@ export function PostScreen({ navigation }) {
                             selectIcon: 'arrow-down-bold',
                             type: 'material-community',
                             selectColor: theme.colors.secondary,
+                            onPress: () => { vote('down') },
                         },
                         {
                             name: 'star',
@@ -231,9 +242,27 @@ export function PostScreen({ navigation }) {
                             type: 'antdesign',
                         },
                     ].map((item) => {
+                        const isSelect = postInfo?.[item.name]?.includes(_id) || false;
+                        console.log(postInfo?.[item.name], item.name, isSelect);
+
+
                         return (
-                            <TouchableOpacity key={item.name} style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', height: '100%', width: ScreenWidth / 8 }}>
-                                <Icon name={item.icon} type={item.type} />
+                            <TouchableOpacity
+                                key={item.name}
+                                style={{
+                                    flexDirection: 'row',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    height: '100%',
+                                    width: ScreenWidth / 8
+                                }}
+                                onPress={item.onPress}
+                            >
+                                <Icon
+                                    name={isSelect ? item.selectIcon : item.icon}
+                                    type={item.type}
+                                    color={isSelect ? item.selectColor : undefined}
+                                />
                                 {item.name !== 'share' ? <Text>{0}</Text> : <></>}
                             </TouchableOpacity>
                         )
