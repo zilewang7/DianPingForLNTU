@@ -13,12 +13,13 @@ import { MyAvatar } from '../components/components/avatar';
 import { formatDate } from '../util/time';
 import { StarRatingDisplay } from 'react-native-star-rating-widget';
 import { Pressable } from 'react-native';
+import { FollowButton } from '../components/components/followButton';
 
 export function PostScreen({ navigation }) {
     const postInfo: any = useRoute().params;
     const { theme } = useTheme();
 
-    const { businessName, businessAddress, imageUrls = [], username, avatarUrl, title, rating, content, createdAt, up, down, comments = [] } = postInfo;
+    const { businessName, businessAddress, imageUrls = [], username, authorId, avatarUrl, title, rating, content, createdAt, up, down, comments = [] } = postInfo;
 
     const headerHeight = useHeaderHeight();
 
@@ -133,7 +134,7 @@ export function PostScreen({ navigation }) {
                                 <MyAvatar avatarUrl={avatarUrl} children={undefined} onAvatarPress={undefined} size={'md'} />
                                 <Text h4> {username}</Text>
                             </Pressable>
-                            <Button size='sm' title='+关注' />
+                            <FollowButton userId={authorId} />
                         </View>
                         {
                             title && <Text style={{ fontSize: 22, fontWeight: 'bold' }}>{title}</Text>
@@ -152,7 +153,6 @@ export function PostScreen({ navigation }) {
                     </View>
                     <Divider style={{ marginVertical: 10, marginHorizontal: 10 }} />
                     <View style={{ paddingHorizontal: 15 }}><Text h4>回复</Text></View>
-
                     {
                         comments.length ?
                             (

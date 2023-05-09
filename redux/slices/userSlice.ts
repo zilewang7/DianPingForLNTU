@@ -4,6 +4,11 @@ interface User {
   username: string;
   avatarUrl?: string;
   starBusiness?: string[];
+  _id?: string;
+  posts?: string[];
+  starPost?: string[];
+  follow?: string[];
+  fans?: string[];
 }
 
 const initialState: User = {

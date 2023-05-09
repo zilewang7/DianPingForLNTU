@@ -7,14 +7,16 @@ import { MyImageViewer } from './components/imgVIewer';
 import { useDispatch } from 'react-redux';
 import { updateUser } from '../redux/slices/userSlice';
 import { CommonActions, useNavigation } from '@react-navigation/native';
+import { FollowButton } from './components/followButton';
 
 interface UserInfo {
     isCurrentUser: boolean,
     username: string,
     avatarUrl?: string,
+    userId?: string,
 }
 
-export function UserView({ isCurrentUser = false, username, avatarUrl }: UserInfo) {
+export function UserView({ isCurrentUser = false, username, avatarUrl, userId }: UserInfo) {
     const [visible, setVisible] = useState(false);
     const dispatch = useDispatch();
     const navigation = useNavigation();
@@ -64,7 +66,7 @@ export function UserView({ isCurrentUser = false, username, avatarUrl }: UserInf
                     </MyAvatar>
                     <View style={styles.usernameContainer}>
                         <Text style={styles.username}>{username} </Text>
-                        {isCurrentUser || <Button title='+关注' size="sm" containerStyle={{ marginHorizontal: 10 }} />}
+                        {isCurrentUser || <FollowButton userId={userId} />}
                     </View>
                 </View>
                 <MyImageViewer

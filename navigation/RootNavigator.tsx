@@ -10,8 +10,7 @@ import { useAppearanceChangeListener } from "../util/theme-hook";
 import { navigationRef } from "./RootNavigation";
 import { useSelector } from "../redux/hook";
 import { useColorScheme } from "react-native";
-import { updateUser } from "../redux/slices/userSlice";
-import { getUserInfo } from "../api/user.api";
+import { pullUser } from "../util/user2";
 
 const RootStack = createStackNavigator();
 
@@ -30,9 +29,7 @@ export const RootNavigator = ({ onReady }) => {
         updateTheme({ ...userTheme, mode: colorScheme }) // 加载主题
 
         if (userInfo.username !== '未登录') {
-            getUserInfo(userInfo.username).then(userInfo => { // 更新用户数据
-                dispatch(updateUser(userInfo.json))
-            })
+            pullUser();
         }
     }, []);
 

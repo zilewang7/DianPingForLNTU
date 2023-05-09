@@ -23,3 +23,7 @@ export const userLogin = (username: string, password: string) => {
 export const getUserInfo = (username: string) => {
   return postAPI("/user/info", { username });
 };
+
+export const followUser = (targetId: string) => {
+  return postAPI("/user/follow", { targetId });
+};
