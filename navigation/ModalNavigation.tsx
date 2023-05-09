@@ -4,6 +4,7 @@ import LoginScreen from '../screens/LoginScreen';
 import BusinessScreen from '../screens/BusinessScreen';
 import { EditPostScreen } from '../screens/EditPostScreen';
 import { PostScreen } from '../screens/PostScreen';
+import { UserScreen } from '../screens/UserScreen';
 
 const Stack = createStackNavigator();
 
@@ -29,5 +30,10 @@ export const ModalNavigation = [
         name="点评"
         options={{ headerTransparent: true }}
         component={PostScreen}
+    />,
+    <Stack.Screen
+        key={4}
+        name="用户"
+        component={UserScreen}
     />,
 ];
