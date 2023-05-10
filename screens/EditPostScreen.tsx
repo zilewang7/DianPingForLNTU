@@ -121,7 +121,7 @@ export function EditPostScreen({ navigation }) {
     }
 
     return (
-        <>
+        <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : null} keyboardVerticalOffset={80}>
             <View style={{ flex: 1 }}>
                 <Input
                     value={title}
@@ -144,32 +144,15 @@ export function EditPostScreen({ navigation }) {
                     contentRef.current.blur();
                     contentRef.current.focus();
                 }}>
-                    {
-                        Platform.OS == "ios" ?
-                            <>
-                                <KeyboardAvoidingView style={{ flex: 1 }} behavior='padding'>
-                                    <Input
-                                        value={content}
-                                        placeholder='内容（必填）'
-                                        multiline={true}
-                                        inputContainerStyle={{ borderBottomWidth: 0 }}
-                                        onChangeText={setContent}
-                                        ref={contentRef}
-                                    />
-                                </KeyboardAvoidingView>
-                                <KeyboardAvoidingView behavior='padding' />
-                            </>
-                            :
-                            <Input
-                                value={content}
-                                placeholder='内容（必填）'
-                                multiline={true}
-                                inputContainerStyle={{ borderBottomWidth: 0 }}
-                                containerStyle={{ flex: 1 }}
-                                onChangeText={setContent}
-                                ref={contentRef}
-                            />
-                    }
+                    <Input
+                        value={content}
+                        placeholder='内容（必填）'
+                        multiline={true}
+                        inputContainerStyle={{ borderBottomWidth: 0 }}
+                        containerStyle={{ flex: 1 }}
+                        onChangeText={setContent}
+                        ref={contentRef}
+                    />
                 </Pressable>
                 <Divider style={{ marginVertical: 10 }} />
                 <ImagePicker images={images} setImages={setImages} />
@@ -196,6 +179,6 @@ export function EditPostScreen({ navigation }) {
                     }} title='确定' />
                 }
             </Dialog>
-        </>
+        </KeyboardAvoidingView>
     )
 }
