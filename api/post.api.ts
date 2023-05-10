@@ -17,5 +17,5 @@ export const addPostStar = (uid: string) => {
 };
 
 export const commentPost = (uid, comment) => {
-  return postAPI("/user/comment", { uid, comment });
+  return postAPI("/post/comment", { uid, comment });
 };

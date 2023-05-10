@@ -8,7 +8,7 @@ import { ImagePicker } from '../components/pickImage';
 import { uploadImg } from '../util/img';
 import { useSelector } from '../redux/hook';
 
-interface UpdatingState {
+export interface UpdatingState {
     visible: boolean;
     message: string;
     process: number;
