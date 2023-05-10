@@ -15,3 +15,7 @@ export const votePost = async (vote) => {
 export const addPostStar = (uid: string) => {
   return postAPI("/user/addOrRemovePostStar", { uid });
 };
+
+export const commentPost = (uid, comment) => {
+  return postAPI("/user/comment", { uid, comment });
+};

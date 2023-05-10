@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import StaggeredList from '@mindinventory/react-native-stagger-view';
-import { Button, Divider, Icon, Input, Text, useTheme } from '@rneui/themed'
+import { Badge, Button, Divider, Icon, Input, Text, useTheme } from '@rneui/themed'
 import { useRoute } from '@react-navigation/native';
 import { useHeaderHeight } from '@react-navigation/elements';
 import { ScreenHeight, ScreenWidth } from '@rneui/base';
@@ -16,9 +16,10 @@ import { formatDate } from '../util/time';
 import { StarRatingDisplay } from 'react-native-star-rating-widget';
 import { Pressable } from 'react-native';
 import { FollowButton } from '../components/components/followButton';
-import { addPostStar, getPosts, votePost } from '../api/post.api';
+import { addPostStar, commentPost, getPosts, votePost } from '../api/post.api';
 import { useSelector } from '../redux/hook';
 import { pullUser } from '../util/user2';
+import { ImagePicker } from '../components/pickImage';
 
 export function PostScreen({ navigation }) {
     const beforePostInfo: any = useRoute().params;
@@ -33,6 +34,9 @@ export function PostScreen({ navigation }) {
     const [imgIndex, setImgIndex] = useState(0);
     const [onScreenShot, setScreenShot] = useState(false);
     const [aspectRatio, setAspectRatio] = useState(1);
+    const [inputValue, setInputValue] = useState('');
+    const [commentImages, setCommentImages] = useState([]);
+    const [onSelectImage, setOnSelectImage] = useState(false);
 
     let { uid, businessName, businessAddress, imageUrls = [], username, authorId, avatarUrl, title, rating, content, createdAt, up, down, comments = [] } = postInfo;
 
@@ -91,6 +95,15 @@ export function PostScreen({ navigation }) {
                     down,
                 }))
             }
+        })
+    }
+
+    const onCommitPost = () => {
+        // TODO: upload image
+
+        commentPost(uid, {
+            content: inputValue,
+            imageUrls: []
         })
     }
 
@@ -227,91 +240,135 @@ export function PostScreen({ navigation }) {
                 </ScrollView>
                 <View style={{
                     flexDirection: 'row',
-                    height: 50,
+                    height: inputValue ? 150 : 50,
                     backgroundColor: theme.colors.background,
                     alignItems: 'center',
                     justifyContent: 'space-between',
                 }}>
-                    <View style={{ width: '50%', paddingHorizontal: 10 }}>
+                    <View style={{
+                        width: inputValue ? '100%' : '50%',
+                        paddingHorizontal: 10,
+                        flexDirection: 'row',
+                        justifyContent: 'space-between',
+                        alignItems: 'flex-end',
+                    }}>
+                        {
+                            inputValue || onSelectImage ? (
+                                <TouchableOpacity onPress={() => setOnSelectImage(state => !state)}>
+                                    <Icon name="picture" type='antdesign' />
+                                    {
+                                        commentImages.length ? (
+                                            <Badge
+                                                // value={commentImages.length}
+                                                status="error"
+                                                containerStyle={{ position: 'absolute', top: 0, right: 0 }}
+                                            />
+                                        ) : <></>
+                                    }
+
+                                </TouchableOpacity>
+                            ) : <></>
+                        }
                         <Input
-                            placeholder='回复'
-                            containerStyle={{ backgroundColor: theme.colors.grey5, borderRadius: 10, overflow: 'hidden', height: 40 }}
+                            multiline={true}
+                            containerStyle={{
+                                backgroundColor: theme.colors.grey5,
+                                borderRadius: 10,
+                                overflow: 'hidden',
+                                height: inputValue ? 140 : 40,
+                                width: inputValue ? ScreenWidth - 100 : '100%',
+                            }}
                             leftIconContainerStyle={{ marginVertical: 0 }}
                             inputContainerStyle={{ borderBottomWidth: 0 }}
-                            leftIcon={<Icon name='edit' type='antdesign' size={15} />}
+                            leftIcon={inputValue ? undefined : <Icon name='edit' type='antdesign' size={15} />}
+                            placeholder='回复'
+                            value={inputValue}
+                            onChangeText={setInputValue}
                         />
-                    </View>
-                    <View style={{ width: '50%', flexDirection: 'row' }}>
-                        {[
-                            {
-                                name: 'up',
-                                icon: 'arrow-up-bold-outline',
-                                selectIcon: 'arrow-up-bold',
-                                type: 'material-community',
-                                selectColor: theme.colors.primary,
-                                onPress: () => { vote('up') },
-                            },
-                            {
-                                name: 'down',
-                                icon: 'arrow-down-bold-outline',
-                                selectIcon: 'arrow-down-bold',
-                                type: 'material-community',
-                                selectColor: theme.colors.secondary,
-                                onPress: () => { vote('down') },
-                            },
-                            {
-                                name: 'star',
-                                icon: 'staro',
-                                selectIcon: 'star',
-                                type: 'antdesign',
-                                selectColor: '#f7b129',
-                                onPress: () => { addPostStar(uid).then((res) => { if (res.ok) { pullUser() } }) }
-                            },
-                            {
-                                name: 'share',
-                                icon: 'sharealt',
-                                type: 'antdesign',
-                                onPress: async () => {
-                                    try {
-                                        setScreenShot(true);
-                                        await new Promise(resolve => setTimeout(resolve)); // 等待渲染完成
-                                        const uri = await captureRef(viewShotRef,
-                                            { fileName: username + headerTitle }
-                                        )
-                                        await Sharing.shareAsync('file://' + uri);
-                                    } catch (error) {
-                                        console.error(error);
-                                    } finally {
-                                        setScreenShot(false);
-                                    }
-                                }
-                            },
-                        ].map((item) => {
-                            const isSelect = bottomButtonState[item.name]
-                            return (
-                                <TouchableOpacity
-                                    key={item.name}
-                                    style={{
-                                        flexDirection: 'row',
-                                        alignItems: 'center',
-                                        justifyContent: 'center',
-                                        height: '100%',
-                                        width: ScreenWidth / 8
-                                    }}
-                                    onPress={item.onPress}
-                                >
-                                    <Icon
-                                        name={isSelect ? item.selectIcon : item.icon}
-                                        type={item.type}
-                                        color={isSelect ? item.selectColor : undefined}
-                                    />
-                                    {(item.name === 'up' || item.name === 'down') ? <Text>{postInfo[item.name].length}</Text> : <></>}
-                                </TouchableOpacity>
-                            )
-                        })
+                        {
+                            inputValue ? <Button title={'发送'} size='sm' onPress={onCommitPost} /> : <></>
                         }
                     </View>
+                    {
+                        inputValue ? <></> : (
+                            <View style={{ width: '50%', flexDirection: 'row' }}>
+                                {[
+                                    {
+                                        name: 'up',
+                                        icon: 'arrow-up-bold-outline',
+                                        selectIcon: 'arrow-up-bold',
+                                        type: 'material-community',
+                                        selectColor: theme.colors.primary,
+                                        onPress: () => { vote('up') },
+                                    },
+                                    {
+                                        name: 'down',
+                                        icon: 'arrow-down-bold-outline',
+                                        selectIcon: 'arrow-down-bold',
+                                        type: 'material-community',
+                                        selectColor: theme.colors.secondary,
+                                        onPress: () => { vote('down') },
+                                    },
+                                    {
+                                        name: 'star',
+                                        icon: 'staro',
+                                        selectIcon: 'star',
+                                        type: 'antdesign',
+                                        selectColor: '#f7b129',
+                                        onPress: () => { addPostStar(uid).then((res) => { if (res.ok) { pullUser() } }) }
+                                    },
+                                    {
+                                        name: 'share',
+                                        icon: 'sharealt',
+                                        type: 'antdesign',
+                                        onPress: async () => {
+                                            try {
+                                                setScreenShot(true);
+                                                await new Promise(resolve => setTimeout(resolve)); // 等待渲染完成
+                                                const uri = await captureRef(viewShotRef,
+                                                    { fileName: username + headerTitle }
+                                                )
+                                                await Sharing.shareAsync('file://' + uri);
+                                            } catch (error) {
+                                                console.error(error);
+                                            } finally {
+                                                setScreenShot(false);
+                                            }
+                                        }
+                                    },
+                                ].map((item) => {
+                                    const isSelect = bottomButtonState[item.name]
+                                    return (
+                                        <TouchableOpacity
+                                            key={item.name}
+                                            style={{
+                                                flexDirection: 'row',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                height: '100%',
+                                                width: ScreenWidth / 8
+                                            }}
+                                            onPress={item.onPress}
+                                        >
+                                            <Icon
+                                                name={isSelect ? item.selectIcon : item.icon}
+                                                type={item.type}
+                                                color={isSelect ? item.selectColor : undefined}
+                                            />
+                                            {(item.name === 'up' || item.name === 'down') ? <Text>{postInfo[item.name].length}</Text> : <></>}
+                                        </TouchableOpacity>
+                                    )
+                                })
+                                }
+                            </View>
+                        )
+                    }
                 </View>
+                {
+                    onSelectImage ? (
+                        <ImagePicker images={commentImages} setImages={setCommentImages} />
+                    ) : <></>
+                }
                 {
                     onScreenShot && (
                         <ScreenShotBottom ScreenHeight={ScreenHeight} content={username + ' 的\n' + headerTitle} />
