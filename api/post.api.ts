@@ -11,3 +11,7 @@ export const getPosts = async (posts) => {
 export const votePost = async (vote) => {
   return await postAPI("/post/vote", vote);
 };
+
+export const addPostStar = (uid: string) => {
+  return postAPI("/user/addOrRemovePostStar", { uid });
+};

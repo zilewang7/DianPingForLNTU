@@ -6,6 +6,8 @@ import { useHeaderHeight } from '@react-navigation/elements';
 import { ScreenHeight, ScreenWidth } from '@rneui/base';
 import { View, Platform, Image } from 'react-native';
 import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
+import { captureRef } from 'react-native-view-shot';
+import * as Sharing from 'expo-sharing';
 import { hexToRgba } from '../util/color';
 import { ScreenShotBottom } from '../components/components/screenShotBottom';
 import { ImageList } from '../components/components/imageList';
@@ -14,23 +16,26 @@ import { formatDate } from '../util/time';
 import { StarRatingDisplay } from 'react-native-star-rating-widget';
 import { Pressable } from 'react-native';
 import { FollowButton } from '../components/components/followButton';
-import { votePost } from '../api/post.api';
+import { addPostStar, getPosts, votePost } from '../api/post.api';
 import { useSelector } from '../redux/hook';
+import { pullUser } from '../util/user2';
 
 export function PostScreen({ navigation }) {
-    const postInfo: any = useRoute().params;
+    const beforePostInfo: any = useRoute().params;
     const { _id, starPost } = useSelector(state => state.user);
     const { theme } = useTheme();
     const headerHeight = useHeaderHeight();
 
-    const { uid, businessName, businessAddress, imageUrls = [], username, authorId, avatarUrl, title, rating, content, createdAt, up, down, comments = [] } = postInfo;
-
     const viewShotRef = useRef<any>();
     const headerRef = useRef<any>(0);
 
-    const [imgIndex, setImgIndex] = React.useState(0);
+    const [postInfo, setPostInfo] = useState(beforePostInfo);
+    const [imgIndex, setImgIndex] = useState(0);
     const [onScreenShot, setScreenShot] = useState(false);
     const [aspectRatio, setAspectRatio] = useState(1);
+
+    let { uid, businessName, businessAddress, imageUrls = [], username, authorId, avatarUrl, title, rating, content, createdAt, up, down, comments = [] } = postInfo;
+
 
     const imageHeight = useMemo(() => {
         const imgH = ScreenWidth / aspectRatio;
@@ -42,9 +47,20 @@ export function PostScreen({ navigation }) {
     }, [aspectRatio, ScreenWidth, ScreenHeight])
 
     const bottomButtonState = useMemo(() => {
+        return {
+            'up': up?.includes(_id) || false,
+            'down': down?.includes(_id) || false,
+            'star': starPost?.includes(uid) || false,
+        }
+    }, [_id, starPost, JSON.stringify(up), JSON.stringify(down), uid])
 
-    }, [_id, starPost, JSON.stringify(up), JSON.stringify(down)])
-
+    useEffect(() => {
+        getPosts({ posts: [uid] }).then((res) => {
+            if (res.ok) {
+                setPostInfo(res.json[0]);
+            }
+        })
+    }, [uid])
     useEffect(() => {
         if (imageUrls.length) {
             Image.getSize(
@@ -55,16 +71,29 @@ export function PostScreen({ navigation }) {
             );
         }
     }, [imageUrls?.[0]])
-    useEffect(() => {
+    const headerTitle = useMemo(() => {
         const place = businessAddress.split('-');
+        return `${businessName}(${place[0]}食堂${place[1]}楼) 点评`
+    }, [])
+    useEffect(() => {
         navigation.setOptions({
-            title: `${businessName}(${place[0]}食堂${place[1]}楼) 点评`,
+            title: headerTitle,
         });
     }, []);
 
     const vote = (type) => {
-        votePost({ type, uid })
+        votePost({ type, uid }).then((res) => {
+            if (res.ok) {
+                const { up, down } = res.json;
+                setPostInfo(postInfo => ({
+                    ...postInfo,
+                    up,
+                    down,
+                }))
+            }
+        })
     }
+
 
     return (
         <View style={{ flex: 1, backgroundColor: theme.colors.background }} ref={viewShotRef}>
@@ -235,17 +264,29 @@ export function PostScreen({ navigation }) {
                             selectIcon: 'star',
                             type: 'antdesign',
                             selectColor: '#f7b129',
+                            onPress: () => { addPostStar(uid).then((res) => { if (res.ok) { pullUser() } }) }
                         },
                         {
                             name: 'share',
                             icon: 'sharealt',
                             type: 'antdesign',
+                            onPress: async () => {
+                                try {
+                                    setScreenShot(true);
+                                    await new Promise(resolve => setTimeout(resolve)); // 等待渲染完成
+                                    const uri = await captureRef(viewShotRef,
+                                        { fileName: username + headerTitle }
+                                    )
+                                    await Sharing.shareAsync('file://' + uri);
+                                } catch (error) {
+                                    console.error(error);
+                                } finally {
+                                    setScreenShot(false);
+                                }
+                            }
                         },
                     ].map((item) => {
-                        const isSelect = postInfo?.[item.name]?.includes(_id) || false;
-                        console.log(postInfo?.[item.name], item.name, isSelect);
-
-
+                        const isSelect = bottomButtonState[item.name]
                         return (
                             <TouchableOpacity
                                 key={item.name}
@@ -263,7 +304,7 @@ export function PostScreen({ navigation }) {
                                     type={item.type}
                                     color={isSelect ? item.selectColor : undefined}
                                 />
-                                {item.name !== 'share' ? <Text>{0}</Text> : <></>}
+                                {(item.name === 'up' || item.name === 'down') ? <Text>{postInfo[item.name].length}</Text> : <></>}
                             </TouchableOpacity>
                         )
                     })
@@ -272,7 +313,7 @@ export function PostScreen({ navigation }) {
             </View>
             {
                 onScreenShot && (
-                    <ScreenShotBottom ScreenHeight={ScreenHeight} content={``} />
+                    <ScreenShotBottom ScreenHeight={ScreenHeight} content={username + ' 的\n' + headerTitle} />
                 )
             }
         </View >

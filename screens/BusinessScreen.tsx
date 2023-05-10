@@ -123,6 +123,7 @@ function BusinessScreen({ navigation }) {
     useEffect(() => {
         getPostsInfo();
     }, [JSON.stringify(posts)])
+
     useEffect(() => {
         navigation.setOptions({
             title: `${name}( ${params.placeText})`,
