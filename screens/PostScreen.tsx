@@ -19,9 +19,10 @@ import { FollowButton } from '../components/components/followButton';
 import { addPostStar, commentPost, getPosts, votePost } from '../api/post.api';
 import { useSelector } from '../redux/hook';
 import { pullUser } from '../util/user2';
-import { ImagePicker } from '../components/pickImage';
+import { ImagePicker } from '../components/components/pickImage';
 import { UpdatingState } from './EditPostScreen';
 import { uploadImg } from '../util/img';
+import { CommentListBox } from '../components/CommentListBox';
 
 export function PostScreen({ navigation }) {
     const beforePostInfo: any = useRoute().params;
@@ -43,7 +44,8 @@ export function PostScreen({ navigation }) {
     const [updating, setUpdatingState] = useState<number>(0);
 
 
-    let { uid, businessName, businessAddress, imageUrls = [], username, authorId, avatarUrl, title, rating, content, createdAt, up, down, comments = [] } = postInfo;
+    let { uid, businessName, businessAddress, imageUrls = [], authorId, title, rating, content, createdAt, up, down, comments = [] } = postInfo;
+    const { username, avatarUrl, _id: id } = authorId;
 
 
     const imageHeight = useMemo(() => {
@@ -247,7 +249,7 @@ export function PostScreen({ navigation }) {
                                     <MyAvatar avatarUrl={avatarUrl} children={undefined} onAvatarPress={undefined} size={'md'} />
                                     <Text h4> {username}</Text>
                                 </Pressable>
-                                <FollowButton userId={authorId} />
+                                <FollowButton userId={id} />
                             </View>
                             {
                                 title && <Text style={{ fontSize: 22, fontWeight: 'bold' }}>{title}</Text>
@@ -273,7 +275,7 @@ export function PostScreen({ navigation }) {
                                         animationType='EFFECTIVE'
                                         data={comments}
                                         numColumns={1}
-                                        renderItem={({ item }) => <></>}
+                                        renderItem={({ item }) => <CommentListBox comment={item} />}
                                     />
                                 )
                                 : (

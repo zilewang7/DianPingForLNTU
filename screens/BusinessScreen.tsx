@@ -100,7 +100,7 @@ function BusinessScreen({ navigation }) {
                     case '发布':
                         return 'uid';
                     case '回复':
-                        return 'commentsUpdatedAt';
+                        return Date.parse(o.commentsUpdatedAt);
                     case '顶':
                         return o.up.length;
                     case '踩':
@@ -112,9 +112,6 @@ function BusinessScreen({ navigation }) {
                 }
             }
         );
-        if (sort === '回复') {
-            sortedPosts.reverse()
-        }
         setTimeout(() => {
             setPostsInfo(sortState ? sortedPosts.reverse() : sortedPosts)
         })

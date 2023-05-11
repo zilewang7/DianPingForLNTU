@@ -4,7 +4,7 @@ import { Button, Dialog, Divider, Input, LinearProgress, Text } from '@rneui/the
 import StarRating from 'react-native-star-rating-widget';
 import { useRoute } from '@react-navigation/native';
 import { createPost } from '../api/post.api';
-import { ImagePicker } from '../components/pickImage';
+import { ImagePicker } from '../components/components/pickImage';
 import { uploadImg } from '../util/img';
 import { useSelector } from '../redux/hook';
 

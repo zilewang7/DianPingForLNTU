@@ -2,8 +2,8 @@ import React, { useRef, useState } from 'react';
 import { StyleSheet, View, TouchableOpacity, ScrollView, Pressable } from 'react-native';
 import { Image } from 'expo-image'
 import { Icon, Text } from '@rneui/themed'
-import { pickImage } from '../util/img';
-import { MyImageViewer } from './components/imgVIewer';
+import { pickImage } from '../../util/img';
+import { MyImageViewer } from './imgVIewer';
 
 export const ImagePicker = ({ images, setImages }: { images: string[], setImages: React.Dispatch<React.SetStateAction<string[]>> }) => {
     const [viewerVisible, setViewerVisible] = useState(false);

@@ -5,12 +5,14 @@ import { Image } from 'expo-image';
 
 const AvatarSize = {
     sm: 20,
+    nm: 40,
     md: 50,
     lg: 64,
 }
 
 const AvatarHeight = {
     sm: '50',
+    nm: '100',
     md: '100',
     lg: '200',
 }
@@ -18,7 +20,7 @@ const AvatarHeight = {
 export function MyAvatar({
     avatarUrl, children, onAvatarPress, size
 }: {
-    avatarUrl: string, children, onAvatarPress: () => void | undefined, size: 'sm' | 'md' | 'lg'
+    avatarUrl: string, children, onAvatarPress: () => void | undefined, size: 'sm' | 'nm' | 'md' | 'lg'
 }) {
     const url = avatarUrl + `?x-oss-process=image/resize,h_${AvatarHeight[size]},m_lfit`;
     return (

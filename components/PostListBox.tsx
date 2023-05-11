@@ -12,7 +12,8 @@ const ITEM_WIDTH = ScreenWidth / 2;
 export function PostListBox({ postInfo, navigation }) {
     const { theme } = useTheme();
 
-    const { username, avatarUrl, rating, title, content, imageUrls, up, down } = postInfo;
+    const { authorId, rating, title, content, imageUrls, up, down } = postInfo;
+    const { username, avatarUrl } = authorId;
 
     const [aspectRatio, setAspectRatio] = useState(1);
     useEffect(() => {
