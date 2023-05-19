@@ -244,7 +244,7 @@ export function PostScreen({ navigation }) {
                         <View style={{ paddingHorizontal: 15 }}>
                             <View style={{ flexDirection: 'row', marginVertical: 15, alignItems: 'center', justifyContent: 'space-between' }}>
                                 <Pressable style={{ flexDirection: 'row', alignItems: 'center' }} onPress={() => {
-                                    navigation.navigate('用户', username);
+                                    navigation.navigate('用户', authorId);
                                 }}>
                                     <MyAvatar avatarUrl={avatarUrl} children={undefined} onAvatarPress={undefined} size={'md'} />
                                     <Text h4> {username}</Text>
@@ -275,7 +275,7 @@ export function PostScreen({ navigation }) {
                                         animationType='EFFECTIVE'
                                         data={comments}
                                         numColumns={1}
-                                        renderItem={({ item }) => <CommentListBox comment={item} uid={uid} setPostInfo={setPostInfo} theme={theme} userId={_id} />}
+                                        renderItem={({ item }) => <CommentListBox navigation={navigation} comment={item} uid={uid} setPostInfo={setPostInfo} theme={theme} userId={_id} />}
                                     />
                                 )
                                 : (

@@ -8,7 +8,7 @@ import { ImageListViewer } from './components/showImage';
 import { voteComment } from '../api/post.api';
 import { clone } from 'lodash';
 
-export function CommentListBox({ theme, comment, uid, setPostInfo, userId }) {
+export function CommentListBox({ navigation, theme, comment, uid, setPostInfo, userId }) {
 
     const { _id, authorId, content, imageUrls, createdAt, reply } = comment;
 
@@ -31,7 +31,7 @@ export function CommentListBox({ theme, comment, uid, setPostInfo, userId }) {
 
     return (
         <View style={{ margin: 15 }}>
-            <Pressable style={{ flexDirection: 'row', justifyContent: 'space-between' }} onPress={() => { }}>
+            <Pressable style={{ flexDirection: 'row', justifyContent: 'space-between' }} onPress={() => { navigation.navigate('用户', authorId); }}>
                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                     <MyAvatar avatarUrl={avatarUrl} children={undefined} onAvatarPress={undefined} size={'nm'} />
                     <Text style={{ fontSize: 16, paddingLeft: 10, fontWeight: 'bold' }}>{username}</Text>
