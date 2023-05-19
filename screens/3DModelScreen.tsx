@@ -1,12 +1,16 @@
-import { ButtonGroup, Text } from '@rneui/themed';
+import { ButtonGroup, Divider, Text, useTheme } from '@rneui/themed';
 import React, { useEffect, useState } from 'react'
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, TouchableOpacity } from 'react-native';
 import { ModalCard } from '../components/components/modalCard';
 import { CanteenModel } from '../components/threeJS/CanteenModel';
 import { useRoute } from '@react-navigation/native';
+import { StarRatingDisplay } from 'react-native-star-rating-widget';
+import { hexToRgba } from '../util/color';
 
 
 function ModelScreen({ setTabSwitchAllowed }) {
+    const { theme } = useTheme();
+
     const [selectedCanteen, setSelectedCanteen] = useState(0);
     const [selectedFloorsIndex, setSelectedFloors] = useState([0, 1, 2]);
     const [modalState, setModalState] = useState(false);
@@ -21,7 +25,9 @@ function ModelScreen({ setTabSwitchAllowed }) {
         if (index === 2) return '2'
     })
 
-    const [selectedRestaurant, setSelectedRestaurant] = useState(null);
+    const [selectedRestaurant, setSelectedRestaurant] = useState<any>({});
+
+    const { name = '', type = '', rating = 0 } = selectedRestaurant;
 
     const onSelectRestaurant = (info) => {
         setSelectedRestaurant(info);
@@ -89,9 +95,31 @@ function ModelScreen({ setTabSwitchAllowed }) {
                 transparent={true}
                 touchOutOfCard={setModalState.bind(this, false)}
             >
-                <Text>{JSON.stringify(selectedRestaurant)}</Text>
+                <View style={{ flexDirection: 'row' }}>
+                    <Text h4>{name} </Text>
+                    <Text
+                        style={{
+                            alignSelf: 'center',
+                            paddingHorizontal: 4,
+                            borderRadius: 5,
+                            backgroundColor: hexToRgba(theme.colors.primary, '0.15'),
+                            color: theme.colors.primary,
+                            overflow: 'hidden',
+                        }}
+                    >
+                        {type}
+                    </Text>
+                </View>
+                <Divider style={{ marginVertical: 10 }} />
+                <View style={{ alignItems: 'center', marginBottom: 15 }}>
+                    <Text h4>评分：{(parseInt((rating * 10).toString()) / 10) || '暂无'}</Text>
+                    <StarRatingDisplay rating={rating} style={{ marginTop: 5 }} />
+                </View>
+                <TouchableOpacity style={{ alignItems: 'center' }} onPress={() => { }}>
+                    <Text h4>进入店铺 &gt;</Text>
+                </TouchableOpacity>
             </ModalCard>
-        </View>
+        </View >
     )
 };
 

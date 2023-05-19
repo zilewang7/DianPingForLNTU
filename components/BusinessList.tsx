@@ -11,6 +11,7 @@ import { getBusinessList } from '../api/business.api';
 import { BusinessFilterList } from '../constants/business';
 import { useDispatch } from 'react-redux';
 import { setCurrentBusinessData, updateBusinessList } from '../redux/slices/businessSlice';
+import StaggeredList from '@mindinventory/react-native-stagger-view';
 
 
 export function BusinessList({ navigation }) {
@@ -25,6 +26,7 @@ export function BusinessList({ navigation }) {
 
     const onFilterChange = async (newFilter?, index?) => {
         setIsRefresh(true);
+        setBusinessData([]);
         const currentFilter = cloneDeep(filter);
         if (newFilter) {
             currentFilter[index] = newFilter;
@@ -40,7 +42,7 @@ export function BusinessList({ navigation }) {
         })
 
         const { json } = await getBusinessList(transFilter);
-        setBusinessData(json);
+        setTimeout(() => { setBusinessData(json) })
         dispatch(updateBusinessList(json));
         setIsRefresh(false)
         return json;
@@ -87,25 +89,14 @@ export function BusinessList({ navigation }) {
                     )
                 })}
             </View>
-            <FlatList
+            <StaggeredList
+                animationType='SLIDE_LEFT'
+                numColumns={1}
                 data={businessData}
-                // contentContainerStyle={{ paddingBottom: 10, }}
-                keyExtractor={item => item.address}
-                // columnWrapperStyle={{ flexDirection: 'row' }}
                 showsVerticalScrollIndicator={false}
-                refreshControl={
-                    <RefreshControl
-                        colors={[theme.colors.primary]} //android
-                        tintColor={theme.colors.primary} //ios
-                        refreshing={isRefresh}
-                        onRefresh={() => {
-                            onFilterChange();
-                        }}
-                    />
-                }
-                numColumns={columnNum}
-                onEndReached={() => {
-                    // setBusinessData(list => [...list, ...list]);
+                refreshing={isRefresh}
+                onRefresh={() => {
+                    onFilterChange();
                 }}
                 renderItem={({ item }) => {
                     const place = item.address.split('-')
