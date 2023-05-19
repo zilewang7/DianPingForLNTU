@@ -5,13 +5,29 @@ import { MyAvatar } from './components/avatar';
 import { formatDate } from '../util/time';
 import { Pressable } from 'react-native';
 import { ImageListViewer } from './components/showImage';
+import { voteComment } from '../api/post.api';
+import { clone } from 'lodash';
 
-export function CommentListBox({ comment }) {
-    const { theme } = useTheme();
+export function CommentListBox({ theme, comment, uid, setPostInfo, userId }) {
 
-    const { authorId, content, imageUrls, createdAt, reply } = comment;
+    const { _id, authorId, content, imageUrls, createdAt, reply } = comment;
 
     const { username, avatarUrl } = authorId;
+
+    const vote = (type) => {
+        voteComment({ type, uid, commentId: _id }).then((res) => {
+            if (res.ok) {
+                const { up, down } = res.json;
+                setPostInfo(postInfo => {
+                    const newPostInfo = clone(postInfo)
+                    const currentComment = newPostInfo.comments.find(({ _id: c_id }) => c_id === _id);
+                    currentComment.up = up;
+                    currentComment.down = down;
+                    return newPostInfo;
+                })
+            }
+        })
+    }
 
     return (
         <View style={{ margin: 15 }}>
@@ -43,7 +59,7 @@ export function CommentListBox({ comment }) {
                         selectIcon: 'arrow-up-bold',
                         type: 'material-community',
                         selectColor: theme.colors.primary,
-                        onPress: () => { },
+                        onPress: () => { vote('up') },
                     },
                     {
                         name: 'down',
@@ -51,10 +67,11 @@ export function CommentListBox({ comment }) {
                         selectIcon: 'arrow-down-bold',
                         type: 'material-community',
                         selectColor: theme.colors.secondary,
-                        onPress: () => { },
+                        onPress: () => { vote('down') },
                     },
                 ].map((item) => {
-                    const isSelect = false;
+                    const isSelect = comment?.[item.name]?.includes(userId) || false;
+
                     return (
                         <TouchableOpacity
                             key={item.name}
@@ -72,7 +89,7 @@ export function CommentListBox({ comment }) {
                                 type={item.type}
                                 color={isSelect ? item.selectColor : undefined}
                             />
-                            <Text>{0}</Text>
+                            <Text>{comment?.[item.name]?.length || 0}</Text>
                         </TouchableOpacity>
                     )
                 })

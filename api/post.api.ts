@@ -19,3 +19,7 @@ export const addPostStar = (uid: string) => {
 export const commentPost = (uid, comment) => {
   return postAPI("/post/comment", { uid, comment });
 };
+
+export const voteComment = async (vote) => {
+  return await postAPI("/post/voteComment", vote);
+};

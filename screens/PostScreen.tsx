@@ -267,7 +267,7 @@ export function PostScreen({ navigation }) {
                             <Text style={{ color: theme.colors.grey3 }}>发布时间：{formatDate(createdAt).join(' ')}</Text>
                         </View>
                         <Divider style={{ marginVertical: 10, marginHorizontal: 10 }} />
-                        <View style={{ paddingHorizontal: 15 }}><Text h4>回复</Text></View>
+                        <View style={{ paddingHorizontal: 15, flexDirection: 'row', alignItems: 'center' }}><Text h4>回复</Text><Text> {comments.length}</Text></View>
                         {
                             comments.length ?
                                 (
@@ -275,7 +275,7 @@ export function PostScreen({ navigation }) {
                                         animationType='EFFECTIVE'
                                         data={comments}
                                         numColumns={1}
-                                        renderItem={({ item }) => <CommentListBox comment={item} />}
+                                        renderItem={({ item }) => <CommentListBox comment={item} uid={uid} setPostInfo={setPostInfo} theme={theme} userId={_id} />}
                                     />
                                 )
                                 : (
