@@ -14,6 +14,7 @@ type BusinessList = Business[];
 const initialState: {
   businessList: BusinessList;
   currentBusiness?: Business;
+  helper?: any;
 } = {
   businessList: [],
 };
@@ -34,9 +35,15 @@ const businessSlice = createSlice({
         currentBusiness: action.payload,
       };
     },
+    setHelper: (state, action) => {
+      return {
+        ...state,
+        helper: action.payload,
+      };
+    },
   },
 });
 
-export const { updateBusinessList, setCurrentBusinessData } =
+export const { updateBusinessList, setCurrentBusinessData, setHelper } =
   businessSlice.actions;
 export default businessSlice.reducer;

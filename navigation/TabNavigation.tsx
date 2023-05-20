@@ -58,7 +58,7 @@ export function TabNavigation() {
                 }}
                 listeners={listeners}
             >
-                {() => <ModelScreen setTabSwitchAllowed={setTabSwitchAllowed} />}
+                {(navigation) => <ModelScreen setTabSwitchAllowed={setTabSwitchAllowed} navigation={navigation} />}
             </Tab.Screen>
             <Tab.Screen
                 name="我的"

@@ -10,7 +10,7 @@ import { hexToRgba } from '../util/color';
 import { getBusinessList } from '../api/business.api';
 import { BusinessFilterList } from '../constants/business';
 import { useDispatch } from 'react-redux';
-import { setCurrentBusinessData, updateBusinessList } from '../redux/slices/businessSlice';
+import { setCurrentBusinessData, setHelper, updateBusinessList } from '../redux/slices/businessSlice';
 import StaggeredList from '@mindinventory/react-native-stagger-view';
 
 
@@ -44,6 +44,7 @@ export function BusinessList({ navigation }) {
         const { json } = await getBusinessList(transFilter);
         setTimeout(() => { setBusinessData(json) })
         dispatch(updateBusinessList(json));
+        dispatch(setHelper({ refreshBusiness, backToBusiness }))
         setIsRefresh(false)
         return json;
     }
@@ -106,6 +107,7 @@ export function BusinessList({ navigation }) {
                             onPress={async () => {
                                 currentBusinessRef.current = item.address;
                                 setTimeout(() => {
+
                                     navigation.navigate("商家", { business: item, placeText, refreshBusiness, backToBusiness });
                                 })
                             }}

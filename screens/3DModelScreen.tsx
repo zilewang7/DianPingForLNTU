@@ -6,10 +6,13 @@ import { CanteenModel } from '../components/threeJS/CanteenModel';
 import { useRoute } from '@react-navigation/native';
 import { StarRatingDisplay } from 'react-native-star-rating-widget';
 import { hexToRgba } from '../util/color';
+import { useSelector } from '../redux/hook';
 
 
-function ModelScreen({ setTabSwitchAllowed }) {
+function ModelScreen({ setTabSwitchAllowed, navigation }) {
     const { theme } = useTheme();
+
+    const { refreshBusiness, backToBusiness } = useSelector(state => state.business.helper);
 
     const [selectedCanteen, setSelectedCanteen] = useState(0);
     const [selectedFloorsIndex, setSelectedFloors] = useState([0, 1, 2]);
@@ -115,7 +118,13 @@ function ModelScreen({ setTabSwitchAllowed }) {
                     <Text h4>评分：{(parseInt((rating * 10).toString()) / 10) || '暂无'}</Text>
                     <StarRatingDisplay rating={rating} style={{ marginTop: 5 }} />
                 </View>
-                <TouchableOpacity style={{ alignItems: 'center' }} onPress={() => { }}>
+                <TouchableOpacity style={{ alignItems: 'center' }} onPress={() => {
+                    const place = selectedRestaurant.address.split('-');
+                    const placeText = `${place[0]} 食堂 ${place[1]} 楼`;
+                    setTimeout(() => {
+                        navigation.navigation.navigate("商家", { business: selectedRestaurant, placeText, refreshBusiness, backToBusiness });
+                    })
+                }}>
                     <Text h4>进入店铺 &gt;</Text>
                 </TouchableOpacity>
             </ModalCard>
