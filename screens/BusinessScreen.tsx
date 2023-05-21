@@ -65,8 +65,9 @@ function BusinessScreen({ navigation }) {
     const getPostsInfo = () => {
         getPosts({ posts }).then((res) => {
             if (res.ok) {
-                setOriginPostInfo(res.json)
-                setPostsInfo(res.json)
+                const sortByUid = sortBy(res.json, (o) => -Number(o.uid))
+                setOriginPostInfo(sortByUid)
+                setPostsInfo(sortByUid)
             }
         }).catch((err) => { console.error(err) })
     }
@@ -98,7 +99,7 @@ function BusinessScreen({ navigation }) {
             (o) => {
                 switch (sort) {
                     case '发布':
-                        return 'uid';
+                        return Number(o.uid);
                     case '回复':
                         return Date.parse(o.commentsUpdatedAt);
                     case '顶':
