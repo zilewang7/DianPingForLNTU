@@ -1,5 +1,5 @@
 import { Icon, Text, useTheme } from '@rneui/themed'
-import React from 'react'
+import React, { useMemo } from 'react'
 import { TouchableOpacity, View } from 'react-native'
 import { MyAvatar } from './components/avatar';
 import { formatDate } from '../util/time';
@@ -8,9 +8,19 @@ import { ImageListViewer } from './components/showImage';
 import { voteComment } from '../api/post.api';
 import { clone } from 'lodash';
 
-export function CommentListBox({ navigation, theme, comment, uid, setPostInfo, userId }) {
+export function CommentListBox({ navigation, theme, comment, uid, setPostInfo, userId, onReply }) {
 
-    const { _id, authorId, content, imageUrls, createdAt, reply } = comment;
+    const { _id, authorId, content: originContent, imageUrls, createdAt } = comment;
+
+    const [reply, content] = useMemo(() => {
+        if (originContent[0] !== '[' || originContent[0] === ']' || !originContent.includes(']')) {
+            return ['', originContent]
+        }
+        const splitText = originContent.split(']');
+        const replyText = splitText[0].slice(1);
+        const contentText = splitText[1];
+        return [replyText, contentText]
+    }, [originContent])
 
     const { username, avatarUrl } = authorId;
 
@@ -38,16 +48,14 @@ export function CommentListBox({ navigation, theme, comment, uid, setPostInfo, u
                 </View>
                 <Text style={{ color: theme.colors.grey3 }}>{formatDate(createdAt).join(' ')}</Text>
             </Pressable>
-            <TouchableOpacity style={{ margin: 15, marginLeft: 50 }}>
+            <TouchableOpacity style={{ margin: 15, marginLeft: 50 }} onPress={() => onReply(_id)}>
+                {
+                    reply && <Text style={{ backgroundColor: theme.colors.disabled, borderRadius: 5, padding: 5, overflow: 'hidden' }}>{reply}</Text>
+                }
                 <Text style={{ fontSize: 16 }}>{content}</Text>
                 {
                     imageUrls.length ? (
                         <ImageListViewer images={imageUrls} />
-                    ) : <></>
-                }
-                {
-                    reply.length ? (
-                        <Text>{JSON.stringify(imageUrls)}</Text>
                     ) : <></>
                 }
             </TouchableOpacity>

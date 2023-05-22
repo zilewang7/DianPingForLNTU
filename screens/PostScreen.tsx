@@ -42,11 +42,17 @@ export function PostScreen({ navigation }) {
     const [commentImages, setCommentImages] = useState([]);
     const [onSelectImage, setOnSelectImage] = useState(false);
     const [updating, setUpdatingState] = useState<number>(0);
-
+    const [replyCommentId, setReplyCommentId] = useState();
 
     let { uid, businessName, businessAddress, imageUrls = [], authorId, title, rating, content, createdAt, up, down, comments = [] } = postInfo;
     const { username, avatarUrl, _id: id } = authorId;
 
+    const currentReplyInfo = useMemo(() => {
+        if (!replyCommentId) {
+            return undefined;
+        }
+        return comments.find(({ _id }) => _id === replyCommentId);
+    }, [replyCommentId])
 
     const imageHeight = useMemo(() => {
         const imgH = ScreenWidth / aspectRatio;
@@ -170,6 +176,14 @@ export function PostScreen({ navigation }) {
         })
     }
 
+    const onReply = (commentId) => {
+        setReplyCommentId(commentId);
+        const { content, authorId: { username } } = comments.find(({ _id }) => _id === commentId);
+        setInputValue(`[回复：/${username}/${content.slice(0, 5)}${content.length > 5 ? '...' : ''}]\n`);
+        inputRef.current.blur();
+        inputRef.current.focus();
+    }
+
 
     return (
         <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : null} keyboardVerticalOffset={25}>
@@ -275,7 +289,15 @@ export function PostScreen({ navigation }) {
                                         animationType='EFFECTIVE'
                                         data={comments}
                                         numColumns={1}
-                                        renderItem={({ item }) => <CommentListBox navigation={navigation} comment={item} uid={uid} setPostInfo={setPostInfo} theme={theme} userId={_id} />}
+                                        renderItem={({ item }) => <CommentListBox
+                                            navigation={navigation}
+                                            comment={item}
+                                            uid={uid}
+                                            setPostInfo={setPostInfo}
+                                            theme={theme}
+                                            userId={_id}
+                                            onReply={onReply}
+                                        />}
                                     />
                                 )
                                 : (
