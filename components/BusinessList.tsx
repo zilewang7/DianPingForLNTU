@@ -10,7 +10,7 @@ import { hexToRgba } from '../util/color';
 import { getBusinessList } from '../api/business.api';
 import { BusinessFilterList } from '../constants/business';
 import { useDispatch } from 'react-redux';
-import { setCurrentBusinessData, setHelper, updateBusinessList } from '../redux/slices/businessSlice';
+import { setHelper, updateBusinessList } from '../redux/slices/businessSlice';
 import StaggeredList from '@mindinventory/react-native-stagger-view';
 
 
@@ -44,7 +44,6 @@ export function BusinessList({ navigation }) {
         const { json } = await getBusinessList(transFilter);
         setTimeout(() => { setBusinessData(json) })
         dispatch(updateBusinessList(json));
-        dispatch(setHelper({ refreshBusiness, backToBusiness }))
         setIsRefresh(false)
         return json;
     }
@@ -52,20 +51,28 @@ export function BusinessList({ navigation }) {
     const refreshBusiness = async () => {
         await onFilterChange().then(json => {
             setFilter(BusinessFilterList.map((v) => v.option));
-            const currentBusinessData = json.filter(({ address }) => address === currentBusinessRef.current)[0];
-            dispatch(setCurrentBusinessData(currentBusinessData));
+            const currentBusinessData = json.find(({ address }) => address === currentBusinessRef.current.business);
+            currentBusinessRef.current = {
+                ...currentBusinessRef.current,
+                data: currentBusinessData,
+            };
         })
     }
 
-    const backToBusiness = async (newBusinessData) => {
+    const backToBusiness = async () => {
+        const newBusinessData = currentBusinessRef.current.data;
         const place = newBusinessData.address.split('-');
         const placeText = `${place[0]} 食堂 ${place[1]} 楼`;
         setTimeout(() => {
-            navigation.navigate("商家", { business: newBusinessData, placeText, refreshBusiness, backToBusiness });
+            navigation.navigate("商家", { business: newBusinessData, placeText });
         })
     }
 
-    useEffect(() => { onFilterChange() }, [])
+    useEffect(() => {
+        onFilterChange().then(() => {
+            dispatch(setHelper({ refreshBusiness, backToBusiness }))
+        })
+    }, [])
 
     let columnNum = ScreenWidth < 600 ? 1 : 2;
     return (
@@ -105,10 +112,10 @@ export function BusinessList({ navigation }) {
                     return (
                         <Pressable
                             onPress={async () => {
-                                currentBusinessRef.current = item.address;
+                                currentBusinessRef.current = { business: item.address };
                                 setTimeout(() => {
 
-                                    navigation.navigate("商家", { business: item, placeText, refreshBusiness, backToBusiness });
+                                    navigation.navigate("商家", { business: item, placeText });
                                 })
                             }}
                             style={{

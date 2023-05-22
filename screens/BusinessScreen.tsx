@@ -57,8 +57,6 @@ function BusinessScreen({ navigation }) {
             address,
             rating: isUserRating ? ratingValue : undefined,
             placeText: `${name}( ${params.placeText})`,
-            refreshBusiness: params.refreshBusiness,
-            backToBusiness: params.backToBusiness,
         });
     };
 
@@ -259,7 +257,7 @@ function BusinessScreen({ navigation }) {
                                                     PostSortList.map(sort => {
                                                         const isOnSort = sortList[sort] !== undefined;
                                                         return (
-                                                            <Pressable style={{ flexDirection: 'row', alignItems: 'center' }} onPress={() => { onSortChange(sort) }}>
+                                                            <Pressable key={sort} style={{ flexDirection: 'row', alignItems: 'center' }} onPress={() => { onSortChange(sort) }}>
                                                                 <Icon name={isOnSort ? ['sort-down', 'sort-up'][sortList[sort]] : 'sort'}
                                                                     type='font-awesome'
                                                                     size={18}

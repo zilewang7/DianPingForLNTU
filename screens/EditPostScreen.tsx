@@ -16,9 +16,9 @@ export interface UpdatingState {
 
 export function EditPostScreen({ navigation }) {
     const params: any = useRoute().params;
+    const { address, rating, placeText } = params;
 
-    const currentBusiness = useSelector(state => state.business.currentBusiness);
-    const { address, rating, placeText, refreshBusiness, backToBusiness } = params;
+    const { refreshBusiness, backToBusiness } = useSelector(state => state.business.helper);
 
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
@@ -175,7 +175,7 @@ export function EditPostScreen({ navigation }) {
                 {
                     updatingState.message === '提交成功' && <Button onPress={() => {
                         setUpdatingState(0);
-                        backToBusiness(currentBusiness);
+                        backToBusiness();
                     }} title='确定' />
                 }
             </Dialog>

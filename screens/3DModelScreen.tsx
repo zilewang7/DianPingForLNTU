@@ -6,13 +6,10 @@ import { CanteenModel } from '../components/threeJS/CanteenModel';
 import { useRoute } from '@react-navigation/native';
 import { StarRatingDisplay } from 'react-native-star-rating-widget';
 import { hexToRgba } from '../util/color';
-import { useSelector } from '../redux/hook';
 
 
 function ModelScreen({ setTabSwitchAllowed, navigation }) {
     const { theme } = useTheme();
-
-    const { refreshBusiness, backToBusiness } = useSelector(state => state.business.helper);
 
     const [selectedCanteen, setSelectedCanteen] = useState(0);
     const [selectedFloorsIndex, setSelectedFloors] = useState([0, 1, 2]);
@@ -122,7 +119,7 @@ function ModelScreen({ setTabSwitchAllowed, navigation }) {
                     const place = selectedRestaurant.address.split('-');
                     const placeText = `${place[0]} 食堂 ${place[1]} 楼`;
                     setTimeout(() => {
-                        navigation.navigation.navigate("商家", { business: selectedRestaurant, placeText, refreshBusiness, backToBusiness });
+                        navigation.navigation.navigate("商家", { business: selectedRestaurant, placeText });
                     })
                 }}>
                     <Text h4>进入店铺 &gt;</Text>
