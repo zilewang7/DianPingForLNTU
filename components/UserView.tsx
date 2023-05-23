@@ -5,18 +5,18 @@ import { MyAvatar } from './components/avatar';
 import { pickImage, uploadImg } from '../util/img';
 import { MyImageViewer } from './components/imgVIewer';
 import { useDispatch } from 'react-redux';
-import { updateUser } from '../redux/slices/userSlice';
+import { User, updateUser } from '../redux/slices/userSlice';
 import { CommonActions, useNavigation } from '@react-navigation/native';
 import { FollowButton } from './components/followButton';
 
 interface UserInfo {
     isCurrentUser: boolean,
-    username: string,
-    avatarUrl?: string,
-    userId?: string,
+    userInfo: User,
 }
 
-export function UserView({ isCurrentUser = false, username, avatarUrl, userId }: UserInfo) {
+export function UserView({ isCurrentUser, userInfo }: UserInfo) {
+    const { username, _id, avatarUrl } = userInfo;
+
     const [visible, setVisible] = useState(false);
     const dispatch = useDispatch();
     const navigation = useNavigation();
@@ -66,7 +66,7 @@ export function UserView({ isCurrentUser = false, username, avatarUrl, userId }:
                     </MyAvatar>
                     <View style={styles.usernameContainer}>
                         <Text style={styles.username}>{username} </Text>
-                        {isCurrentUser || <FollowButton userId={userId} />}
+                        {isCurrentUser || <FollowButton userId={_id} />}
                     </View>
                 </View>
                 <MyImageViewer
@@ -76,13 +76,13 @@ export function UserView({ isCurrentUser = false, username, avatarUrl, userId }:
                 />
             </View>
             <View style={styles.vertical}>
-                <Info title='点评' />
+                <Info title='点评' num={userInfo.posts?.length} />
                 <Divider orientation="vertical" width={2} />
-                <Info title='收藏' />
+                <Info title='收藏' num={userInfo.starBusiness?.length} />
                 <Divider orientation="vertical" width={2} />
-                <Info title='关注' />
+                <Info title='关注' num={userInfo.follow?.length} />
                 <Divider orientation="vertical" width={2} />
-                <Info title='粉丝' />
+                <Info title='粉丝' num={userInfo.fans?.length} />
             </View>
         </Pressable>
     )

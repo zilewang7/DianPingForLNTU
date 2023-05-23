@@ -13,9 +13,9 @@ export function FollowButton({ userId, size = 'sm' }: {
 
     const isFollowed = follow?.includes(userId);
     const color = isFollowed ? theme.colors.black : theme.colors.white
-    // if (_id === userId) {
-    //     return <></>
-    // }
+    if (_id === userId) {
+        return <></>
+    }
     return (
         <Button
             size={size}
