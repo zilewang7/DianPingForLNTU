@@ -27,3 +27,7 @@ export const getUserInfo = (username: string) => {
 export const followUser = (targetId: string) => {
   return postAPI("/user/follow", { targetId });
 };
+
+export const getUsersInfo = (userList: string[]) => {
+  return postAPI("/user/users", { userList });
+};

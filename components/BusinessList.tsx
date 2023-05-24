@@ -68,9 +68,13 @@ export function BusinessList({ navigation }) {
         })
     }
 
+    const setCurrentBusiness = (address) => {
+        currentBusinessRef.current = { business: address };
+    }
+
     useEffect(() => {
         onFilterChange().then(() => {
-            dispatch(setHelper({ refreshBusiness, backToBusiness }))
+            dispatch(setHelper({ refreshBusiness, backToBusiness, setCurrentBusiness }))
         })
     }, [])
 
@@ -112,9 +116,8 @@ export function BusinessList({ navigation }) {
                     return (
                         <Pressable
                             onPress={async () => {
-                                currentBusinessRef.current = { business: item.address };
+                                setCurrentBusiness(item.address)
                                 setTimeout(() => {
-
                                     navigation.navigate("商家", { business: item, placeText });
                                 })
                             }}

@@ -6,10 +6,12 @@ import { CanteenModel } from '../components/threeJS/CanteenModel';
 import { useRoute } from '@react-navigation/native';
 import { StarRatingDisplay } from 'react-native-star-rating-widget';
 import { hexToRgba } from '../util/color';
+import { useSelector } from '../redux/hook';
 
 
 function ModelScreen({ setTabSwitchAllowed, navigation }) {
     const { theme } = useTheme();
+    const { setCurrentBusiness } = useSelector(state => state.business.helper)
 
     const [selectedCanteen, setSelectedCanteen] = useState(0);
     const [selectedFloorsIndex, setSelectedFloors] = useState([0, 1, 2]);
@@ -26,8 +28,6 @@ function ModelScreen({ setTabSwitchAllowed, navigation }) {
     })
 
     const [selectedRestaurant, setSelectedRestaurant] = useState<any>({});
-
-    const { name = '', type = '', rating = 0 } = selectedRestaurant;
 
     const onSelectRestaurant = (info) => {
         setSelectedRestaurant(info);
@@ -96,7 +96,7 @@ function ModelScreen({ setTabSwitchAllowed, navigation }) {
                 touchOutOfCard={setModalState.bind(this, false)}
             >
                 <View style={{ flexDirection: 'row' }}>
-                    <Text h4>{name} </Text>
+                    <Text h4>{selectedRestaurant?.name} </Text>
                     <Text
                         style={{
                             alignSelf: 'center',
@@ -107,17 +107,18 @@ function ModelScreen({ setTabSwitchAllowed, navigation }) {
                             overflow: 'hidden',
                         }}
                     >
-                        {type}
+                        {selectedRestaurant?.type}
                     </Text>
                 </View>
                 <Divider style={{ marginVertical: 10 }} />
                 <View style={{ alignItems: 'center', marginBottom: 15 }}>
-                    <Text h4>评分：{(parseInt((rating * 10).toString()) / 10) || '暂无'}</Text>
-                    <StarRatingDisplay rating={rating} style={{ marginTop: 5 }} />
+                    <Text h4>评分：{(parseInt((selectedRestaurant?.rating * 10).toString()) / 10) || '暂无'}</Text>
+                    <StarRatingDisplay rating={selectedRestaurant?.rating || 0} style={{ marginTop: 5 }} />
                 </View>
                 <TouchableOpacity style={{ alignItems: 'center' }} onPress={() => {
                     const place = selectedRestaurant.address.split('-');
                     const placeText = `${place[0]} 食堂 ${place[1]} 楼`;
+                    setCurrentBusiness(selectedRestaurant.address)
                     setTimeout(() => {
                         navigation.navigation.navigate("商家", { business: selectedRestaurant, placeText });
                     })

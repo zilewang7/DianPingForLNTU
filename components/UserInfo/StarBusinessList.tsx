@@ -1,5 +1,5 @@
 import React from 'react'
-import { ScrollView, View } from 'react-native'
+import { Pressable, ScrollView, View } from 'react-native'
 import { Icon, Text, useTheme } from '@rneui/themed'
 import { Image } from 'expo-image'
 import { useSelector } from '../../redux/hook'
@@ -9,10 +9,11 @@ import { addBusinessStar } from '../../api/business.api'
 import { updateUser } from '../../redux/slices/userSlice'
 import { useDispatch } from 'react-redux'
 
-export function StarBusinessList({ starBusiness }) {
+export function StarBusinessList({ starBusiness, navigation }) {
     const { theme } = useTheme();
     const business = useSelector(state => state.business.businessList);
     const userInfo = useSelector(state => state.user);
+    const { setCurrentBusiness } = useSelector(state => state.business.helper);
     const dispatch = useDispatch()
 
     return (
@@ -30,7 +31,7 @@ export function StarBusinessList({ starBusiness }) {
                     const isStar = userInfo.starBusiness.includes(currentAddress);
 
                     return (
-                        <View
+                        <Pressable
                             key={currentAddress}
                             style={{
                                 flexDirection: 'row',
@@ -38,8 +39,16 @@ export function StarBusinessList({ starBusiness }) {
                                 padding: 8,
                                 marginHorizontal: 8,
                                 marginVertical: 5,
-                                backgroundColor: theme.colors.grey5,
+                                backgroundColor: 'rgba(0, 0, 0, 0.05)',
                                 borderRadius: 8,
+                            }}
+                            onPress={() => {
+                                const place = currentBusiness.address.split('-');
+                                const placeText = `${place[0]} 食堂 ${place[1]} 楼`;
+                                setCurrentBusiness(currentBusiness.address)
+                                setTimeout(() => {
+                                    navigation.navigate("商家", { business: currentBusiness, placeText });
+                                })
                             }}
                         >
                             <Image
@@ -83,7 +92,7 @@ export function StarBusinessList({ starBusiness }) {
                                 onPress={async () => {
                                     dispatch(updateUser((await addBusinessStar(currentAddress)).json))
                                 }} />
-                        </View>
+                        </Pressable>
                     )
                 }))
             }

@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { StyleSheet, ScrollView, View, } from 'react-native';
+import { StyleSheet, ScrollView, View } from 'react-native';
 import { useSelector } from '../redux/hook';
 import { UserView } from '../components/UserView';
 import { Icon, ListItem, Tab, TabView, Text } from '@rneui/themed';
@@ -41,6 +41,7 @@ function MineScreen({ navigation }) {
                 <UserView
                     isCurrentUser
                     userInfo={userInfo}
+                    navigation={navigation}
                 />
                 <View style={{ flex: 1 }}>
                     <Tab
@@ -51,15 +52,33 @@ function MineScreen({ navigation }) {
                         <Tab.Item title="收藏的店铺" />
                         <Tab.Item title="收藏的帖子" />
                     </Tab>
+                    {
+                        userInfo._id ? (
+                            <TabView value={index} onChange={setIndex} animationType="spring">
+                                <TabView.Item style={{ width: '100%' }}>
+                                    {
+                                        userInfo?.starBusiness.length ?
+                                            <StarBusinessList starBusiness={userInfo?.starBusiness} navigation={navigation} />
+                                            :
+                                            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                                                <Text>还没有收藏的店铺</Text>
+                                            </View>
+                                    }
+                                </TabView.Item>
+                                <TabView.Item style={{ width: '100%' }}>
+                                    {
+                                        userInfo?.starPost.length ?
+                                            <StarPostList starPost={userInfo?.starPost} navigation={navigation} />
+                                            :
+                                            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                                                <Text>还没有收藏的帖子</Text>
+                                            </View>
+                                    }
+                                </TabView.Item>
+                            </TabView>
+                        ) : <></>
+                    }
 
-                    <TabView value={index} onChange={setIndex} animationType="spring">
-                        <TabView.Item style={{ width: '100%' }}>
-                            <StarBusinessList starBusiness={userInfo?.starBusiness} />
-                        </TabView.Item>
-                        <TabView.Item style={{ width: '100%' }}>
-                            <StarPostList starPost={userInfo?.starPost} />
-                        </TabView.Item>
-                    </TabView>
                 </View>
                 <View style={{}}>
                     {list.map((item, index) => (
@@ -76,7 +95,7 @@ function MineScreen({ navigation }) {
                         </ListItem>
                     ))}
                 </View>
-            </ScrollView>
+            </ScrollView >
             <ModalCard
                 visible={modalState}
                 animationType="slide"

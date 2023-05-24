@@ -6,20 +6,20 @@ import { pickImage, uploadImg } from '../util/img';
 import { MyImageViewer } from './components/imgVIewer';
 import { useDispatch } from 'react-redux';
 import { User, updateUser } from '../redux/slices/userSlice';
-import { CommonActions, useNavigation } from '@react-navigation/native';
+import { CommonActions, NavigationProp, useNavigation } from '@react-navigation/native';
 import { FollowButton } from './components/followButton';
 
 interface UserInfo {
     isCurrentUser: boolean,
     userInfo: User,
+    navigation: NavigationProp<any>
 }
 
-export function UserView({ isCurrentUser, userInfo }: UserInfo) {
+export function UserView({ isCurrentUser, userInfo, navigation }: UserInfo) {
     const { username, _id, avatarUrl } = userInfo;
 
     const [visible, setVisible] = useState(false);
     const dispatch = useDispatch();
-    const navigation = useNavigation();
 
     const pickAvatar = async () => {
         const uri = await pickImage(true);
@@ -56,7 +56,7 @@ export function UserView({ isCurrentUser, userInfo }: UserInfo) {
                         onAvatarPress={username !== '未登录' ? () => {
                             if (avatarUrl) {
                                 setVisible(true)
-                            } else {
+                            } else if (isCurrentUser) {
                                 pickAvatar()
                             }
                         } : undefined}
@@ -75,15 +75,22 @@ export function UserView({ isCurrentUser, userInfo }: UserInfo) {
                     images={[{ url: avatarUrl }]}
                 />
             </View>
-            <View style={styles.vertical}>
-                <Info title='点评' num={userInfo.posts?.length} />
-                <Divider orientation="vertical" width={2} />
-                <Info title='收藏' num={userInfo.starBusiness?.length} />
-                <Divider orientation="vertical" width={2} />
-                <Info title='关注' num={userInfo.follow?.length} />
-                <Divider orientation="vertical" width={2} />
-                <Info title='粉丝' num={userInfo.fans?.length} />
-            </View>
+
+            <Pressable onPress={() => {
+                if (isCurrentUser && username !== '未登录') {
+                    navigation.navigate('用户', userInfo);
+                }
+            }}>
+                <View style={styles.vertical}>
+                    <Info title='点评' num={userInfo.posts?.length} />
+                    <Divider orientation="vertical" width={2} />
+                    <Info title='收藏' num={userInfo.starBusiness?.length} />
+                    <Divider orientation="vertical" width={2} />
+                    <Info title='关注' num={userInfo.follow?.length} />
+                    <Divider orientation="vertical" width={2} />
+                    <Info title='粉丝' num={userInfo.fans?.length} />
+                </View>
+            </Pressable>
         </Pressable>
     )
 };
