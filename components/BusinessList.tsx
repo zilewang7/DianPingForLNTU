@@ -4,7 +4,7 @@ import { View, StyleSheet, FlatList, ImageBackground, RefreshControl, Pressable 
 import { Text, useTheme } from '@rneui/themed';
 import { Image } from 'expo-image';
 import { ScreenWidth } from '@rneui/base';
-import { cloneDeep } from 'lodash';
+import { cloneDeep, isEqual } from 'lodash';
 import { Filter } from './components/filter';
 import { hexToRgba } from '../util/color';
 import { getBusinessList } from '../api/business.api';
@@ -43,7 +43,9 @@ export function BusinessList({ navigation }) {
 
         const { json } = await getBusinessList(transFilter);
         setTimeout(() => { setBusinessData(json) })
-        dispatch(updateBusinessList(json));
+        if (isEqual(currentFilter, BusinessFilterList.map((v) => v.option))) {
+            dispatch(updateBusinessList(json));
+        }
         setIsRefresh(false)
         return json;
     }

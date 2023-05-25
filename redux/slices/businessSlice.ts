@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-interface Business {
+export interface Business {
   address: string;
   name: string;
   pictureUrl: string;
