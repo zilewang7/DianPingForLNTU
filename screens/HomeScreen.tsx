@@ -21,7 +21,7 @@ function HomeScreen({ navigation }) {
                         icon: 'news',
                         type: 'entypo',
                         onPress: () => {
-
+                            navigation.navigate('动态', 'business')
                         }
                     },
                     {
@@ -29,7 +29,7 @@ function HomeScreen({ navigation }) {
                         icon: 'post-add',
                         type: 'material',
                         onPress: () => {
-
+                            navigation.navigate('动态', 'follow')
                         }
                     },
                 ].map((item) => {

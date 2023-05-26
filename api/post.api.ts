@@ -23,3 +23,7 @@ export const commentPost = (uid, comment) => {
 export const voteComment = async (vote) => {
   return await postAPI("/post/voteComment", vote);
 };
+
+export const getPost = async (type: string) => {
+  return await postAPI("/post/getPostList", { type });
+};
