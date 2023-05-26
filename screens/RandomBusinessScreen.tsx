@@ -44,13 +44,22 @@ export function RandomBusinessScreen({ navigation }) {
         filterNameArr[2].forEach((v, i) => {
             filterNameArr[2][i] = isNaN(v[1]) ? '0' : v[1];
         })
-        console.log(filterList, filterNameArr);
 
         const businessListWithFilter = businessList.filter((business) => {
+            const addressArr = business.address.split('-');
+            const address = addressArr[0] + '-' + addressArr[1] + '-'
             const stateArr = filterNameArr.map((filter, index) => {
-
+                switch (index) {
+                    case 0: {
+                        return filter.includes(address)
+                    }
+                    case 1: {
+                        return filter.includes(business.type)
+                    }
+                }
             })
-            return true;
+
+            return !stateArr.includes(false)
         })
         setSelectedRestaurant(sample(businessListWithFilter))
     }
@@ -58,9 +67,10 @@ export function RandomBusinessScreen({ navigation }) {
     return (
         <View style={{ flex: 1, justifyContent: 'space-between', alignItems: 'center', paddingTop: 30, paddingBottom: 50 }}>
             <View style={{ alignItems: 'center' }}>
-                <Text h4>筛选（长按全选）</Text>
+                <Text h4 style={{ marginBottom: 20 }}>筛选（长按全选）</Text>
                 {
                     BusinessFilterList.map((filter, index) => {
+                        if (index === 2) return
                         return (
                             <View
                                 key={filter.title}
