@@ -2,6 +2,7 @@ import React from 'react'
 import { LinearGradient } from 'expo-linear-gradient'
 import { View } from 'react-native'
 import { Text, useTheme } from '@rneui/themed'
+import { Image } from 'expo-image'
 import { hexToRgba } from '../../util/color'
 
 export function ScreenShotBottom({ ScreenHeight, content }) {
@@ -29,9 +30,7 @@ export function ScreenShotBottom({ ScreenHeight, content }) {
                     <Text h3>工大点评</Text>
                     <Text style={{ margin: 5 }}>{content}</Text>
                 </View>
-                <View>
-                    <Text>我是二维码</Text>
-                </View>
+                <Image style={{ height: 100, width: 100 }} source={require('../../assets/qrcode.png')} />
             </View>
         </View>
     )

@@ -7,6 +7,7 @@ import { PostScreen } from '../screens/PostScreen';
 import { UserScreen } from '../screens/UserScreen';
 import { RandomBusinessScreen } from '../screens/RandomBusinessScreen';
 import { PostsScreen } from '../screens/PostsScreen';
+import { AboutScreen } from '../screens/AboutScreen';
 
 const Stack = createStackNavigator();
 
@@ -47,5 +48,10 @@ export const ModalNavigation = [
         key={6}
         name="动态"
         component={PostsScreen}
+    />,
+    <Stack.Screen
+        key={6}
+        name="关于"
+        component={AboutScreen}
     />,
 ];

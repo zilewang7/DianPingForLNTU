@@ -29,7 +29,7 @@ function MineScreen({ navigation }) {
             title: '关于',
             icon: 'ellipsis1',
             onPress: () => {
-
+                navigation.navigate('关于')
             }
         },
     ];

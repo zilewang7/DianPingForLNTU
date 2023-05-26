@@ -43,6 +43,9 @@ dependencies:
   expo:
     specifier: ~48.0.10
     version: 48.0.10(@babel/core@7.20.2)
+  expo-application:
+    specifier: ~5.1.1
+    version: 5.1.1(expo@48.0.10)
   expo-file-system:
     specifier: ~15.2.2
     version: 15.2.2(expo@48.0.10)
