@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { StarRatingDisplay } from 'react-native-star-rating-widget';
-import { View, StyleSheet, FlatList, ImageBackground, RefreshControl, Pressable } from 'react-native';
+import { View, StyleSheet, ImageBackground, Pressable } from 'react-native';
 import { Text, useTheme } from '@rneui/themed';
 import { Image } from 'expo-image';
 import { ScreenWidth } from '@rneui/base';
@@ -75,9 +75,8 @@ export function BusinessList({ navigation }) {
     }
 
     useEffect(() => {
-        onFilterChange().then(() => {
-            dispatch(setHelper({ refreshBusiness, backToBusiness, setCurrentBusiness }))
-        })
+        dispatch(setHelper({ refreshBusiness, backToBusiness, setCurrentBusiness }))
+        onFilterChange();
     }, [])
 
     let columnNum = ScreenWidth < 600 ? 1 : 2;

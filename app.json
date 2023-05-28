@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "DianPingForLNTU",
+    "name": "工大点评",
     "slug": "DianPingForLNTU",
     "version": "0.1.0",
     "orientation": "default",
@@ -15,13 +15,24 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSPhotoLibraryUsageDescription": "允许获取图片",
+        "NSPhotoLibraryAddUsageDescription": "允许保存图片到本地"
+      }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "permissions": [
+        "android.permission.RECORD_AUDIO",
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.WRITE_EXTERNAL_STORAGE",
+        "android.permission.ACCESS_MEDIA_LOCATION"
+      ],
+      "package": "com.ddc777.DianPingForLNTU"
     },
     "plugins": [
       [
@@ -38,6 +49,11 @@
           "isAccessMediaLocationEnabled": true
         }
       ]
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "7ed004de-f1c3-475b-8ad9-5f990e570bd9"
+      }
+    }
   }
 }

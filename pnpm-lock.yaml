@@ -37,6 +37,9 @@ dependencies:
   '@types/react-native':
     specifier: ^0.71.5
     version: 0.71.5
+  base64-arraybuffer:
+    specifier: ^1.0.2
+    version: 1.0.2
   crypto-js:
     specifier: ^4.1.1
     version: 4.1.1
@@ -3039,6 +3042,11 @@ packages:
 
   /balanced-match@1.0.2:
     resolution: {integrity: sha512-3oSeUO0TMV67hN1AmbXsK4yaqU7tjiHlbxRDZOpH0KW9+CeX4bRAaX0Anxt0tx2MrpRpWwQaPwIlISEJhYU5Pw==}
+    dev: false
+
+  /base64-arraybuffer@1.0.2:
+    resolution: {integrity: sha512-I3yl4r9QB5ZRY3XuJVEPfc2XhZO6YweFPI+UovAzn+8/hb3oJ6lnysaFcjVpkCPfVWFUDvoZ8kmVDP7WyRtYtQ==}
+    engines: {node: '>= 0.6.0'}
     dev: false
 
   /base64-js@1.5.1:
