@@ -40,12 +40,20 @@ export function HandleModel(
 
   const childrenRefs = useRef<any[]>([]); // 为每个子对象创建一个 ref 数组
   const [childrenState, setChildrenState] = useState(() =>
-    scene.children.map((child) => ({
-      name: child.name,
-      isSelect: false,
-      position: { x: child.position.x / 10, y: child.position.y / 10, z: child.position.z / 10 },
-      info: businessMap[child.name]
-    }))
+    scene.children.map((child) => {
+      let checkName = child.name;
+      if (checkName.includes('2-15-')) {
+        const place = checkName.split('-');
+        place[1] = '1.5';
+        checkName = place.join('-');
+      }
+      return {
+        name: checkName,
+        isSelect: false,
+        position: { x: child.position.x / 10, y: child.position.y / 10, z: child.position.z / 10 },
+        info: businessMap[checkName]
+      }
+    })
   );
   const [newTarget, setNewTarget] = useState({ x: 0, y: 0, z: 0 });
 
@@ -147,6 +155,7 @@ export function HandleModel(
         childrenRefs.current[index] = childRef; // 将 ref 存入 ref 数组中
 
         const place = child.name.split('-');
+        if (place[1] === '15') { place[1] = '1.5' }
         if (selectedFloors.includes(place[1])) { // 只展示选中楼层
           return (
             <mesh
