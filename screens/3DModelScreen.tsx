@@ -34,8 +34,8 @@ function ModelScreen({ setTabSwitchAllowed, navigation }) {
         setModalState(true);
     }
 
-    const FirstCanteenMolal = require('../assets/canteen/一食堂.glb');
-    const SecondCanteenMolal = require('../assets/canteen/一食堂.glb');
+    const FirstCanteenMolal = require('../assets/canteen/First.glb');
+    const SecondCanteenMolal = require('../assets/canteen/Second.glb');
 
 
     const params: any = useRoute().params;

@@ -1,9 +1,7 @@
 import { navigate } from "../navigation/RootNavigation";
 import { clearUserAuth, getUserToken } from "./user";
 
-const host = "10.0.0.136:3000"; // PC
-// const host = "10.0.0.172:3000"; // Desktop
-
+const host = "api.heimao.icu:14514";
 export const ImgOssHost = "img.heimao.icu";
 
 const myFetch = async (currentHost: string, params) => {
