@@ -8,4 +8,4 @@
 
 [提交 bug/建议 点我](https://github.com/zilewang7/DianPingForLNTU/issues/new)
 
-[QQ群：832775185](http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=jnnDKUldqvn9lJCX_t2GQ2WAa8RmuA1q&authKey=4j1RCsiTkZbJCChOD9Mhi9AqY2cAo%2FnSOiMGxpoRXzLAyfx50WP6RPe7u3TbCSPZ&noverify=0&group_code=832775185)
+qq 群已解散，目前没有 qq 群
